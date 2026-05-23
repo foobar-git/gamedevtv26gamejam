@@ -1,0 +1,1261 @@
+fileFormatVersion: 2
+guid: 5587df38b3ad94747b51b50301f45a6c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1477594699079894083
+    second: yoshi_animation_sprite_sheet_0
+  - first:
+      213: 5518833600819633599
+    second: yoshi_animation_sprite_sheet_1
+  - first:
+      213: -4056062925498372536
+    second: yoshi_animation_sprite_sheet_2
+  - first:
+      213: 4781513606597662070
+    second: yoshi_animation_sprite_sheet_3
+  - first:
+      213: 7782423430758246333
+    second: yoshi_animation_sprite_sheet_4
+  - first:
+      213: 7184866586675874539
+    second: yoshi_animation_sprite_sheet_5
+  - first:
+      213: -5173205652273337434
+    second: yoshi_animation_sprite_sheet_6
+  - first:
+      213: 2185270841297825775
+    second: yoshi_animation_sprite_sheet_7
+  - first:
+      213: 4309923782993180241
+    second: yoshi_animation_sprite_sheet_8
+  - first:
+      213: 9154606778966672643
+    second: yoshi_animation_sprite_sheet_9
+  - first:
+      213: -7869703400455004107
+    second: yoshi_animation_sprite_sheet_10
+  - first:
+      213: -1431096192729498401
+    second: yoshi_animation_sprite_sheet_11
+  - first:
+      213: 1995575705604368663
+    second: yoshi_animation_sprite_sheet_12
+  - first:
+      213: -1889124365164615348
+    second: yoshi_animation_sprite_sheet_13
+  - first:
+      213: -2769392802749250354
+    second: yoshi_animation_sprite_sheet_14
+  - first:
+      213: 807866226809489663
+    second: yoshi_animation_sprite_sheet_15
+  - first:
+      213: -7013134656841054917
+    second: yoshi_animation_sprite_sheet_16
+  - first:
+      213: -422614921474737845
+    second: yoshi_animation_sprite_sheet_17
+  - first:
+      213: 8975476440544478338
+    second: yoshi_animation_sprite_sheet_18
+  - first:
+      213: -4762524642607307612
+    second: yoshi_animation_sprite_sheet_19
+  - first:
+      213: -6002775346924561590
+    second: yoshi_animation_sprite_sheet_20
+  - first:
+      213: -2848303564979308697
+    second: yoshi_animation_sprite_sheet_21
+  - first:
+      213: -6799040607360766004
+    second: yoshi_animation_sprite_sheet_22
+  - first:
+      213: 3955262102242673103
+    second: yoshi_animation_sprite_sheet_23
+  - first:
+      213: -71416937404407008
+    second: yoshi_animation_sprite_sheet_24
+  - first:
+      213: 9130404709332225581
+    second: yoshi_animation_sprite_sheet_25
+  - first:
+      213: 1261125572198114763
+    second: yoshi_animation_sprite_sheet_26
+  - first:
+      213: -6343647200834446268
+    second: yoshi_animation_sprite_sheet_27
+  - first:
+      213: -8470265868484059776
+    second: yoshi_animation_sprite_sheet_28
+  - first:
+      213: 8095951145173879587
+    second: yoshi_animation_sprite_sheet_29
+  - first:
+      213: -1269570236466165216
+    second: yoshi_animation_sprite_sheet_30
+  - first:
+      213: 7016719273504549650
+    second: yoshi_animation_sprite_sheet_31
+  - first:
+      213: 910701698664029853
+    second: yoshi_animation_sprite_sheet_32
+  - first:
+      213: 5492023220078912782
+    second: yoshi_animation_sprite_sheet_33
+  - first:
+      213: -5837712150953890909
+    second: yoshi_animation_sprite_sheet_34
+  - first:
+      213: -7984544823013587253
+    second: yoshi_animation_sprite_sheet_35
+  - first:
+      213: 517513698059826081
+    second: yoshi_animation_sprite_sheet_36
+  - first:
+      213: -7790875616196057788
+    second: yoshi_animation_sprite_sheet_37
+  - first:
+      213: -7874585171554975947
+    second: yoshi_animation_sprite_sheet_38
+  - first:
+      213: -1756218407356205693
+    second: yoshi_animation_sprite_sheet_39
+  - first:
+      213: 1118612263114850143
+    second: yoshi_animation_sprite_sheet_40
+  - first:
+      213: -187790420860524339
+    second: yoshi_animation_sprite_sheet_41
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_0
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 764
+        width: 155
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 34448a8dc88718410800000000000000
+      internalID: 1477594699079894083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_1
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 764
+        width: 153
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fbd185f7be5d69c40800000000000000
+      internalID: 5518833600819633599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_2
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 764
+        width: 153
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84ea90b5248f5b7c0800000000000000
+      internalID: -4056062925498372536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_3
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 764
+        width: 154
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67553f9aa495b5240800000000000000
+      internalID: 4781513606597662070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_4
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 764
+        width: 154
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db7a50290e8b00c60800000000000000
+      internalID: 7782423430758246333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_5
+      rect:
+        serializedVersion: 2
+        x: 1345
+        y: 764
+        width: 154
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bea8361f716c5b360800000000000000
+      internalID: 7184866586675874539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_6
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 764
+        width: 153
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ab643a3ed41538b0800000000000000
+      internalID: -5173205652273337434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1855
+        y: 764
+        width: 155
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fef63998044a35e10800000000000000
+      internalID: 2185270841297825775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_8
+      rect:
+        serializedVersion: 2
+        x: 2113
+        y: 764
+        width: 153
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 156f05e78dcefcb30800000000000000
+      internalID: 4309923782993180241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_9
+      rect:
+        serializedVersion: 2
+        x: 2368
+        y: 764
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30501bebc52bb0f70800000000000000
+      internalID: 9154606778966672643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_10
+      rect:
+        serializedVersion: 2
+        x: 2624
+        y: 764
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5302238e37239c290800000000000000
+      internalID: -7869703400455004107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_11
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 764
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdcb1f05899b32ce0800000000000000
+      internalID: -1431096192729498401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_12
+      rect:
+        serializedVersion: 2
+        x: 3136
+        y: 764
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 719a2fef785b1bb10800000000000000
+      internalID: 1995575705604368663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_13
+      rect:
+        serializedVersion: 2
+        x: 3392
+        y: 764
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c49e3dd166b78c5e0800000000000000
+      internalID: -1889124365164615348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_14
+      rect:
+        serializedVersion: 2
+        x: 3648
+        y: 764
+        width: 156
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec48b943be32199d0800000000000000
+      internalID: -2769392802749250354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_15
+      rect:
+        serializedVersion: 2
+        x: 3904
+        y: 764
+        width: 156
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ff8c3039d0e163b00800000000000000
+      internalID: 807866226809489663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_16
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 508
+        width: 154
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b350201df275cae90800000000000000
+      internalID: -7013134656841054917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_17
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 508
+        width: 154
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b49f7b0d7f1922af0800000000000000
+      internalID: -422614921474737845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_18
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 508
+        width: 154
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2848a80c44c4f8c70800000000000000
+      internalID: 8975476440544478338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_19
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 508
+        width: 154
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a4e85b021d18edb0800000000000000
+      internalID: -4762524642607307612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_20
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 508
+        width: 154
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a4bd61440abd1bca0800000000000000
+      internalID: -6002775346924561590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_21
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 253
+        width: 154
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 767fde4affac878d0800000000000000
+      internalID: -2848303564979308697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_22
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 253
+        width: 154
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccf2ec82794f4a1a0800000000000000
+      internalID: -6799040607360766004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_23
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 253
+        width: 153
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc14db51de9e3e630800000000000000
+      internalID: 3955262102242673103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_24
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 253
+        width: 152
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 023601f7ca6420ff0800000000000000
+      internalID: -71416937404407008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_25
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 253
+        width: 152
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2e0d4b45b6b5be70800000000000000
+      internalID: 9130404709332225581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_26
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 253
+        width: 152
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc5a704b60b608110800000000000000
+      internalID: 1261125572198114763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_27
+      rect:
+        serializedVersion: 2
+        x: 1567
+        y: 253
+        width: 152
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44c9cdd1b76d6f7a0800000000000000
+      internalID: -6343647200834446268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_28
+      rect:
+        serializedVersion: 2
+        x: 1823
+        y: 253
+        width: 155
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 08d54ebe112937a80800000000000000
+      internalID: -8470265868484059776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_29
+      rect:
+        serializedVersion: 2
+        x: 2079
+        y: 253
+        width: 153
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32b810f1ca89a5070800000000000000
+      internalID: 8095951145173879587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_30
+      rect:
+        serializedVersion: 2
+        x: 2334
+        y: 253
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02a860ea894916ee0800000000000000
+      internalID: -1269570236466165216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_31
+      rect:
+        serializedVersion: 2
+        x: 2590
+        y: 253
+        width: 154
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b20e9c005606160800000000000000
+      internalID: 7016719273504549650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_32
+      rect:
+        serializedVersion: 2
+        x: 2846
+        y: 253
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9ed63dae5673ac00800000000000000
+      internalID: 910701698664029853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_33
+      rect:
+        serializedVersion: 2
+        x: 3102
+        y: 253
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e05200b4506973c40800000000000000
+      internalID: 5492023220078912782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_34
+      rect:
+        serializedVersion: 2
+        x: 3358
+        y: 253
+        width: 154
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3ab696d6ab74cfea0800000000000000
+      internalID: -5837712150953890909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_35
+      rect:
+        serializedVersion: 2
+        x: 3614
+        y: 253
+        width: 154
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc6471399c2313190800000000000000
+      internalID: -7984544823013587253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_36
+      rect:
+        serializedVersion: 2
+        x: 3868
+        y: 253
+        width: 156
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a3314b67f39e2700800000000000000
+      internalID: 517513698059826081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_37
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 0
+        width: 155
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 445a167a7ef31e390800000000000000
+      internalID: -7790875616196057788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_38
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 0
+        width: 154
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53f38eff18ad7b290800000000000000
+      internalID: -7874585171554975947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_39
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 0
+        width: 154
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 385f781d9a8a0a7e0800000000000000
+      internalID: -1756218407356205693
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_40
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 0
+        width: 152
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5f3b583deb168f00800000000000000
+      internalID: 1118612263114850143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: yoshi_animation_sprite_sheet_41
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 0
+        width: 153
+        height: 139
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc823607b95d46df0800000000000000
+      internalID: -187790420860524339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      yoshi_animation_sprite_sheet_0: 1477594699079894083
+      yoshi_animation_sprite_sheet_1: 5518833600819633599
+      yoshi_animation_sprite_sheet_10: -7869703400455004107
+      yoshi_animation_sprite_sheet_11: -1431096192729498401
+      yoshi_animation_sprite_sheet_12: 1995575705604368663
+      yoshi_animation_sprite_sheet_13: -1889124365164615348
+      yoshi_animation_sprite_sheet_14: -2769392802749250354
+      yoshi_animation_sprite_sheet_15: 807866226809489663
+      yoshi_animation_sprite_sheet_16: -7013134656841054917
+      yoshi_animation_sprite_sheet_17: -422614921474737845
+      yoshi_animation_sprite_sheet_18: 8975476440544478338
+      yoshi_animation_sprite_sheet_19: -4762524642607307612
+      yoshi_animation_sprite_sheet_2: -4056062925498372536
+      yoshi_animation_sprite_sheet_20: -6002775346924561590
+      yoshi_animation_sprite_sheet_21: -2848303564979308697
+      yoshi_animation_sprite_sheet_22: -6799040607360766004
+      yoshi_animation_sprite_sheet_23: 3955262102242673103
+      yoshi_animation_sprite_sheet_24: -71416937404407008
+      yoshi_animation_sprite_sheet_25: 9130404709332225581
+      yoshi_animation_sprite_sheet_26: 1261125572198114763
+      yoshi_animation_sprite_sheet_27: -6343647200834446268
+      yoshi_animation_sprite_sheet_28: -8470265868484059776
+      yoshi_animation_sprite_sheet_29: 8095951145173879587
+      yoshi_animation_sprite_sheet_3: 4781513606597662070
+      yoshi_animation_sprite_sheet_30: -1269570236466165216
+      yoshi_animation_sprite_sheet_31: 7016719273504549650
+      yoshi_animation_sprite_sheet_32: 910701698664029853
+      yoshi_animation_sprite_sheet_33: 5492023220078912782
+      yoshi_animation_sprite_sheet_34: -5837712150953890909
+      yoshi_animation_sprite_sheet_35: -7984544823013587253
+      yoshi_animation_sprite_sheet_36: 517513698059826081
+      yoshi_animation_sprite_sheet_37: -7790875616196057788
+      yoshi_animation_sprite_sheet_38: -7874585171554975947
+      yoshi_animation_sprite_sheet_39: -1756218407356205693
+      yoshi_animation_sprite_sheet_4: 7782423430758246333
+      yoshi_animation_sprite_sheet_40: 1118612263114850143
+      yoshi_animation_sprite_sheet_41: -187790420860524339
+      yoshi_animation_sprite_sheet_5: 7184866586675874539
+      yoshi_animation_sprite_sheet_6: -5173205652273337434
+      yoshi_animation_sprite_sheet_7: 2185270841297825775
+      yoshi_animation_sprite_sheet_8: 4309923782993180241
+      yoshi_animation_sprite_sheet_9: 9154606778966672643
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
