@@ -20,3 +20,11 @@
 - Fixed missed cross-ref compile error: TubeScript.cs still referenced `assignedHand` — updated to `assignedPlayerCharacter`.
 - Deleted `TextMesh Pro/Examples & Extras/` — cleared all third-party obsolete-API warnings from console.
 
+## 2026-05-23
+- Correctness pass across all 15 scripts: naming violations (Rules 1–7), unused imports, commented-out code, brace style, Update/FixedUpdate loose code extracted into named methods.
+- FireBallScript: Destroy was called every FixedUpdate frame — moved to activation point so it fires exactly once per fireball.
+- EnemyScript: double-underscore field, method name typo, redundant GetComponent on cached collider, indirect bool replaced with explicit values.
+- PlayerController: three GameObject.Find calls replaced with GameManager.Instance; ground-check tautology removed; input field name typo fixed.
+- CameraScript: redundant .transform on Transform parameter removed.
+- Comment pass across all 15 scripts: header comment on every file, inline WHY comments on non-obvious logic and invariants.
+

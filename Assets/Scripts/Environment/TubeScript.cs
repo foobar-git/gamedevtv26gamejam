@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Manages the two-player tube warp sequence. Both players must press down to enter
+// before travel begins — neither teleports until both are inside the tube.
 public class TubeScript : MonoBehaviour
 {
     private bool _isPlayerRedEnteringTube, _isPlayerBlueEnteringTube;
@@ -28,6 +30,7 @@ public class TubeScript : MonoBehaviour
         _isMovingPlayersTubeToTube = false;
         _isMovingPlayersOutOfTube = false;
 
+        // entry/exit is slow and visible (2f); tube-to-tube jump is near-instant (10f)
         speed_movePlayerInOutTubeAnim = 2f;
         speed_movePlayerTubeToTubeAnim = 10f;
         tubeEntryExit_y = 0.7f;
@@ -35,14 +38,29 @@ public class TubeScript : MonoBehaviour
 
     void Update()
     {
-        if (_isPlayerRedEnteringTube) PerPlayerEnterTube(_gameObjectPlayerRed, _tubeEntryPosition, ref _isPlayerRedEnteringTube, ref _isPlayerRedArrivedInTube);
-        if (_isPlayerBlueEnteringTube) PerPlayerEnterTube(_gameObjectPlayerBlue, _tubeEntryPosition, ref _isPlayerBlueEnteringTube, ref _isPlayerBlueArrivedInTube);
+        if (_isPlayerRedEnteringTube)
+        {
+            PerPlayerEnterTube(_gameObjectPlayerRed, _tubeEntryPosition, ref _isPlayerRedEnteringTube, ref _isPlayerRedArrivedInTube);
+        }
+        if (_isPlayerBlueEnteringTube)
+        {
+            PerPlayerEnterTube(_gameObjectPlayerBlue, _tubeEntryPosition, ref _isPlayerBlueEnteringTube, ref _isPlayerBlueArrivedInTube);
+        }
 
+        // both players must be inside before the tube-to-tube jump fires
         if (_isPlayerRedArrivedInTube && _isPlayerBlueArrivedInTube && !_isMovingPlayersTubeToTube && !_isMovingPlayersOutOfTube)
+        {
             PreparePlayersForTubeTravel();
+        }
 
-        if (_isMovingPlayersTubeToTube) MovePlayersTubeToTube(speed_movePlayerTubeToTubeAnim);
-        else if (_isMovingPlayersOutOfTube) MovePlayersOutOfTube(speed_movePlayerInOutTubeAnim);
+        if (_isMovingPlayersTubeToTube)
+        {
+            MovePlayersTubeToTube(speed_movePlayerTubeToTubeAnim);
+        }
+        else if (_isMovingPlayersOutOfTube)
+        {
+            MovePlayersOutOfTube(speed_movePlayerInOutTubeAnim);
+        }
     }
 
     void DisablePlayer(GameObject player)
@@ -57,24 +75,31 @@ public class TubeScript : MonoBehaviour
         player.GetComponent<PlayerController>().playerControlsEnabled = true;
     }
 
+    // lazy fetch — GameManager may not be ready at Awake, so audio is retrieved on first use
     AudioScript GetAudioScript()
     {
         if (_audioScript == null && GameManager.Instance != null)
+        {
             _audioScript = GameManager.Instance.GetComponent<AudioScript>();
+        }
         return _audioScript;
     }
 
     void PreparePlayersForTubeTravel()
     {
-        _playerRedTubeToTubePosition = new Vector3(otherTubeExitTransform.transform.position.x, otherTubeExitTransform.transform.position.y - tubeEntryExit_y, otherTubeExitTransform.transform.position.z);
+        // both players warp to the same destination since they always travel together
+        _playerRedTubeToTubePosition = new Vector3(otherTubeExitTransform.position.x, otherTubeExitTransform.position.y - tubeEntryExit_y, otherTubeExitTransform.position.z);
         _playerBlueTubeToTubePosition = _playerRedTubeToTubePosition;
         _isMovingPlayersTubeToTube = true;
     }
 
     void PreparePlayersForTubeExit()
     {
-        if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
-        _playerRedOutOfTubePosition = new Vector3(otherTubeExitTransform.transform.position.x, otherTubeExitTransform.transform.position.y + tubeEntryExit_y, otherTubeExitTransform.transform.position.z);
+        if (GetAudioScript() != null)
+        {
+            _audioScript.PlayAudio(soundTube);
+        }
+        _playerRedOutOfTubePosition = new Vector3(otherTubeExitTransform.position.x, otherTubeExitTransform.position.y + tubeEntryExit_y, otherTubeExitTransform.position.z);
         _playerBlueOutOfTubePosition = _playerRedOutOfTubePosition;
     }
 
@@ -84,6 +109,7 @@ public class TubeScript : MonoBehaviour
         player.transform.position = Vector3.MoveTowards(player.transform.position, targetPos, dt);
         if (player.transform.position == targetPos)
         {
+            // hide the player during the instant tube-to-tube teleport
             player.SetActive(false);
             entering = false;
             arrived = true;
@@ -94,15 +120,19 @@ public class TubeScript : MonoBehaviour
     {
         float dt = speed * Time.deltaTime;
 
-        bool _gameObjectPlayerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedTubeToTubePosition;
-        bool _gameObjectPlayerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueTubeToTubePosition;
+        bool playerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedTubeToTubePosition;
+        bool playerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueTubeToTubePosition;
 
-        if (!_gameObjectPlayerRedArrived)
+        if (!playerRedArrived)
+        {
             _gameObjectPlayerRed.transform.position = Vector3.MoveTowards(_gameObjectPlayerRed.transform.position, _playerRedTubeToTubePosition, dt);
-        if (!_gameObjectPlayerBlueArrived)
+        }
+        if (!playerBlueArrived)
+        {
             _gameObjectPlayerBlue.transform.position = Vector3.MoveTowards(_gameObjectPlayerBlue.transform.position, _playerBlueTubeToTubePosition, dt);
+        }
 
-        if (_gameObjectPlayerRedArrived && _gameObjectPlayerBlueArrived)
+        if (playerRedArrived && playerBlueArrived)
         {
             _isMovingPlayersTubeToTube = false;
             PreparePlayersForTubeExit();
@@ -117,15 +147,19 @@ public class TubeScript : MonoBehaviour
         _gameObjectPlayerRed.SetActive(true);
         _gameObjectPlayerBlue.SetActive(true);
 
-        bool _gameObjectPlayerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedOutOfTubePosition;
-        bool _gameObjectPlayerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueOutOfTubePosition;
+        bool playerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedOutOfTubePosition;
+        bool playerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueOutOfTubePosition;
 
-        if (!_gameObjectPlayerRedArrived)
+        if (!playerRedArrived)
+        {
             _gameObjectPlayerRed.transform.position = Vector3.MoveTowards(_gameObjectPlayerRed.transform.position, _playerRedOutOfTubePosition, dt);
-        if (!_gameObjectPlayerBlueArrived)
+        }
+        if (!playerBlueArrived)
+        {
             _gameObjectPlayerBlue.transform.position = Vector3.MoveTowards(_gameObjectPlayerBlue.transform.position, _playerBlueOutOfTubePosition, dt);
+        }
 
-        if (_gameObjectPlayerRedArrived && _gameObjectPlayerBlueArrived)
+        if (playerRedArrived && playerBlueArrived)
         {
             _isMovingPlayersOutOfTube = false;
             EnablePlayer(_gameObjectPlayerRed);
@@ -137,15 +171,26 @@ public class TubeScript : MonoBehaviour
         }
     }
 
+    // OnTriggerStay2D so the player can press down at any moment while standing in the
+    // zone — not only on the first frame of contact
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.layer != LayerMask.NameToLayer("Player")) return;
+        if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+        {
+            return;
+        }
 
         PlayerController pc = other.GetComponentInParent<PlayerController>();
-        if (pc == null) return;
+        if (pc == null)
+        {
+            return;
+        }
 
         Keyboard kb = Keyboard.current;
-        if (kb == null) return;
+        if (kb == null)
+        {
+            return;
+        }
 
         if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Red && !_isPlayerRedEnteringTube && !_isPlayerRedArrivedInTube)
         {
@@ -153,9 +198,13 @@ public class TubeScript : MonoBehaviour
             {
                 _gameObjectPlayerRed = pc.gameObject;
                 DisablePlayer(_gameObjectPlayerRed);
+                // z + 1 places the entry target slightly in front so the player slides visually into the tube
                 _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
                 _isPlayerRedEnteringTube = true;
-                if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
+                if (GetAudioScript() != null)
+                {
+                    _audioScript.PlayAudio(soundTube);
+                }
             }
         }
         else if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Blue && !_isPlayerBlueEnteringTube && !_isPlayerBlueArrivedInTube)
@@ -166,7 +215,10 @@ public class TubeScript : MonoBehaviour
                 DisablePlayer(_gameObjectPlayerBlue);
                 _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
                 _isPlayerBlueEnteringTube = true;
-                if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
+                if (GetAudioScript() != null)
+                {
+                    _audioScript.PlayAudio(soundTube);
+                }
             }
         }
     }

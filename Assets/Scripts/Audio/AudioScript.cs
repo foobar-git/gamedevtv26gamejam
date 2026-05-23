@@ -1,35 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
-public class AudioScript : MonoBehaviour {
-    
+// Wraps an AudioSource with two play modes: fire-and-forget (PlayAudio) and
+// wait-to-finish (PlayAudioWaitToFinishClip) which prevents the same clip from overlapping itself.
+public class AudioScript : MonoBehaviour
+{
     public AudioSource audioSource;
     [SerializeField] private bool clipFinished;
 
-	void Awake () {
-		audioSource = GetComponent<AudioSource> ();
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
         clipFinished = true;
-	}
+    }
 
-	public void PlayAudio (AudioClip sound) {
-        if (sound == null) return;
+    public void PlayAudio(AudioClip sound)
+    {
+        if (sound == null)
+        {
+            return;
+        }
         audioSource.clip = sound;
-        audioSource.Play ();
-	}
+        audioSource.Play();
+    }
 
-    public void PlayAudioWaitToFinishClip (AudioClip sound) {
-        if (clipFinished && sound != null) {
+    public void PlayAudioWaitToFinishClip(AudioClip sound)
+    {
+        // clipFinished blocks re-entry so the clip can't interrupt itself if called repeatedly;
+        // PlayAudio deliberately bypasses this for fire-and-forget sounds
+        if (clipFinished && sound != null)
+        {
             clipFinished = false;
             audioSource.clip = sound;
-            audioSource.Play ();
-            StartCoroutine ( WaitForClipToFinish () );
+            audioSource.Play();
+            StartCoroutine(WaitForClipToFinish());
         }
-	}
+    }
 
-    public IEnumerator WaitForClipToFinish () {
-        yield return new WaitForSeconds ( audioSource.clip.length );
+    public IEnumerator WaitForClipToFinish()
+    {
+        yield return new WaitForSeconds(audioSource.clip.length);
         clipFinished = true;
-	}
+    }
 
 } // end of class

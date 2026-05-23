@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+// Centralizes all Unity tag strings used across scripts — avoids hardcoded string literals.
 public class TagScript : MonoBehaviour {
 
     // TAGS ////////////////////////////////////////////////////////////////

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// ScriptableObject holding per-character stats. Assign in the Inspector on PlayerController.
+// Fallback hardcoded values in PlayerController.Awake() mirror these defaults.
 [CreateAssetMenu(menuName = "Game/Character Data")]
 public class CharacterDataSO : ScriptableObject
 {
