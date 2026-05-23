@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public struct HandInput
+public struct PlayerCharacterInput
 {
     public float horizontal;
     public bool jumpPressed;
@@ -34,32 +34,32 @@ public class InputProvider : MonoBehaviour
             isSwapped = !isSwapped;
     }
 
-    public HandInput GetLeftHand()
+    public PlayerCharacterInput GetRedInput()
     {
         if (Keyboard.current == null) return default;
-        return isSwapped ? ReadRightKeys() : ReadLeftKeys();
+        return isSwapped ? ReadBlueKeys() : ReadRedKeys();
     }
 
-    public HandInput GetRightHand()
+    public PlayerCharacterInput GetBlueInput()
     {
         if (Keyboard.current == null) return default;
-        return isSwapped ? ReadLeftKeys() : ReadRightKeys();
+        return isSwapped ? ReadRedKeys() : ReadBlueKeys();
     }
 
-    private HandInput ReadLeftKeys()
+    private PlayerCharacterInput ReadRedKeys()
     {
         Keyboard kb = Keyboard.current;
-        HandInput input;
+        PlayerCharacterInput input;
         input.horizontal = (kb.aKey.isPressed ? -1 : 0) + (kb.dKey.isPressed ? 1 : 0);
         input.jumpPressed = kb.wKey.wasPressedThisFrame;
         input.shootPressed = kb.sKey.wasPressedThisFrame;
         return input;
     }
 
-    private HandInput ReadRightKeys()
+    private PlayerCharacterInput ReadBlueKeys()
     {
         Keyboard kb = Keyboard.current;
-        HandInput input;
+        PlayerCharacterInput input;
         input.horizontal = (kb.leftArrowKey.isPressed ? -1 : 0) + (kb.rightArrowKey.isPressed ? 1 : 0);
         input.jumpPressed = kb.upArrowKey.wasPressedThisFrame;
         input.shootPressed = kb.downArrowKey.wasPressedThisFrame;

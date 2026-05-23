@@ -3,30 +3,30 @@ using UnityEngine.InputSystem;
 
 public class TubeScript : MonoBehaviour
 {
-    private bool marioEnteringTube, luigiEnteringTube;
-    private bool marioArrivedInTube, luigiArrivedInTube;
-    private bool movePlayersTubeToTube, movePlayersOutOfTube;
+    private bool _isPlayerRedEnteringTube, _isPlayerBlueEnteringTube;
+    private bool _isPlayerRedArrivedInTube, _isPlayerBlueArrivedInTube;
+    private bool _isMovingPlayersTubeToTube, _isMovingPlayersOutOfTube;
 
     [SerializeField] private float speed_movePlayerInOutTubeAnim, speed_movePlayerTubeToTubeAnim, tubeEntryExit_y;
 
-    private GameObject mario, luigi;
-    public Transform otherTubeExit;
+    private GameObject _gameObjectPlayerRed, _gameObjectPlayerBlue;
+    public Transform otherTubeExitTransform;
     public AudioClip soundTube;
-    private AudioScript audioScript;
-    private Vector3 tubeEntryPosition;
-    private Vector3 marioTubeToTubePosition, luigiTubeToTubePosition;
-    private Vector3 marioOutOfTubePosition, luigiOutOfTubePosition;
+    private AudioScript _audioScript;
+    private Vector3 _tubeEntryPosition;
+    private Vector3 _playerRedTubeToTubePosition, _playerBlueTubeToTubePosition;
+    private Vector3 _playerRedOutOfTubePosition, _playerBlueOutOfTubePosition;
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
     void Awake()
     {
-        marioEnteringTube = false;
-        luigiEnteringTube = false;
-        marioArrivedInTube = false;
-        luigiArrivedInTube = false;
-        movePlayersTubeToTube = false;
-        movePlayersOutOfTube = false;
+        _isPlayerRedEnteringTube = false;
+        _isPlayerBlueEnteringTube = false;
+        _isPlayerRedArrivedInTube = false;
+        _isPlayerBlueArrivedInTube = false;
+        _isMovingPlayersTubeToTube = false;
+        _isMovingPlayersOutOfTube = false;
 
         speed_movePlayerInOutTubeAnim = 2f;
         speed_movePlayerTubeToTubeAnim = 10f;
@@ -35,14 +35,14 @@ public class TubeScript : MonoBehaviour
 
     void Update()
     {
-        if (marioEnteringTube) PerPlayerEnterTube(mario, tubeEntryPosition, ref marioEnteringTube, ref marioArrivedInTube);
-        if (luigiEnteringTube) PerPlayerEnterTube(luigi, tubeEntryPosition, ref luigiEnteringTube, ref luigiArrivedInTube);
+        if (_isPlayerRedEnteringTube) PerPlayerEnterTube(_gameObjectPlayerRed, _tubeEntryPosition, ref _isPlayerRedEnteringTube, ref _isPlayerRedArrivedInTube);
+        if (_isPlayerBlueEnteringTube) PerPlayerEnterTube(_gameObjectPlayerBlue, _tubeEntryPosition, ref _isPlayerBlueEnteringTube, ref _isPlayerBlueArrivedInTube);
 
-        if (marioArrivedInTube && luigiArrivedInTube && !movePlayersTubeToTube && !movePlayersOutOfTube)
+        if (_isPlayerRedArrivedInTube && _isPlayerBlueArrivedInTube && !_isMovingPlayersTubeToTube && !_isMovingPlayersOutOfTube)
             PreparePlayersForTubeTravel();
 
-        if (movePlayersTubeToTube) MovePlayersTubeToTube(speed_movePlayerTubeToTubeAnim);
-        else if (movePlayersOutOfTube) MovePlayersOutOfTube(speed_movePlayerInOutTubeAnim);
+        if (_isMovingPlayersTubeToTube) MovePlayersTubeToTube(speed_movePlayerTubeToTubeAnim);
+        else if (_isMovingPlayersOutOfTube) MovePlayersOutOfTube(speed_movePlayerInOutTubeAnim);
     }
 
     void DisablePlayer(GameObject player)
@@ -59,23 +59,23 @@ public class TubeScript : MonoBehaviour
 
     AudioScript GetAudioScript()
     {
-        if (audioScript == null && GameManager.Instance != null)
-            audioScript = GameManager.Instance.GetComponent<AudioScript>();
-        return audioScript;
+        if (_audioScript == null && GameManager.Instance != null)
+            _audioScript = GameManager.Instance.GetComponent<AudioScript>();
+        return _audioScript;
     }
 
     void PreparePlayersForTubeTravel()
     {
-        marioTubeToTubePosition = new Vector3(otherTubeExit.transform.position.x, otherTubeExit.transform.position.y - tubeEntryExit_y, otherTubeExit.transform.position.z);
-        luigiTubeToTubePosition = marioTubeToTubePosition;
-        movePlayersTubeToTube = true;
+        _playerRedTubeToTubePosition = new Vector3(otherTubeExitTransform.transform.position.x, otherTubeExitTransform.transform.position.y - tubeEntryExit_y, otherTubeExitTransform.transform.position.z);
+        _playerBlueTubeToTubePosition = _playerRedTubeToTubePosition;
+        _isMovingPlayersTubeToTube = true;
     }
 
     void PreparePlayersForTubeExit()
     {
-        if (GetAudioScript() != null) audioScript.PlayAudio(soundTube);
-        marioOutOfTubePosition = new Vector3(otherTubeExit.transform.position.x, otherTubeExit.transform.position.y + tubeEntryExit_y, otherTubeExit.transform.position.z);
-        luigiOutOfTubePosition = marioOutOfTubePosition;
+        if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
+        _playerRedOutOfTubePosition = new Vector3(otherTubeExitTransform.transform.position.x, otherTubeExitTransform.transform.position.y + tubeEntryExit_y, otherTubeExitTransform.transform.position.z);
+        _playerBlueOutOfTubePosition = _playerRedOutOfTubePosition;
     }
 
     void PerPlayerEnterTube(GameObject player, Vector3 targetPos, ref bool entering, ref bool arrived)
@@ -94,19 +94,19 @@ public class TubeScript : MonoBehaviour
     {
         float dt = speed * Time.deltaTime;
 
-        bool marioArrived = mario.transform.position == marioTubeToTubePosition;
-        bool luigiArrived = luigi.transform.position == luigiTubeToTubePosition;
+        bool _gameObjectPlayerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedTubeToTubePosition;
+        bool _gameObjectPlayerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueTubeToTubePosition;
 
-        if (!marioArrived)
-            mario.transform.position = Vector3.MoveTowards(mario.transform.position, marioTubeToTubePosition, dt);
-        if (!luigiArrived)
-            luigi.transform.position = Vector3.MoveTowards(luigi.transform.position, luigiTubeToTubePosition, dt);
+        if (!_gameObjectPlayerRedArrived)
+            _gameObjectPlayerRed.transform.position = Vector3.MoveTowards(_gameObjectPlayerRed.transform.position, _playerRedTubeToTubePosition, dt);
+        if (!_gameObjectPlayerBlueArrived)
+            _gameObjectPlayerBlue.transform.position = Vector3.MoveTowards(_gameObjectPlayerBlue.transform.position, _playerBlueTubeToTubePosition, dt);
 
-        if (marioArrived && luigiArrived)
+        if (_gameObjectPlayerRedArrived && _gameObjectPlayerBlueArrived)
         {
-            movePlayersTubeToTube = false;
+            _isMovingPlayersTubeToTube = false;
             PreparePlayersForTubeExit();
-            movePlayersOutOfTube = true;
+            _isMovingPlayersOutOfTube = true;
         }
     }
 
@@ -114,26 +114,26 @@ public class TubeScript : MonoBehaviour
     {
         float dt = speed * Time.deltaTime;
 
-        mario.SetActive(true);
-        luigi.SetActive(true);
+        _gameObjectPlayerRed.SetActive(true);
+        _gameObjectPlayerBlue.SetActive(true);
 
-        bool marioArrived = mario.transform.position == marioOutOfTubePosition;
-        bool luigiArrived = luigi.transform.position == luigiOutOfTubePosition;
+        bool _gameObjectPlayerRedArrived = _gameObjectPlayerRed.transform.position == _playerRedOutOfTubePosition;
+        bool _gameObjectPlayerBlueArrived = _gameObjectPlayerBlue.transform.position == _playerBlueOutOfTubePosition;
 
-        if (!marioArrived)
-            mario.transform.position = Vector3.MoveTowards(mario.transform.position, marioOutOfTubePosition, dt);
-        if (!luigiArrived)
-            luigi.transform.position = Vector3.MoveTowards(luigi.transform.position, luigiOutOfTubePosition, dt);
+        if (!_gameObjectPlayerRedArrived)
+            _gameObjectPlayerRed.transform.position = Vector3.MoveTowards(_gameObjectPlayerRed.transform.position, _playerRedOutOfTubePosition, dt);
+        if (!_gameObjectPlayerBlueArrived)
+            _gameObjectPlayerBlue.transform.position = Vector3.MoveTowards(_gameObjectPlayerBlue.transform.position, _playerBlueOutOfTubePosition, dt);
 
-        if (marioArrived && luigiArrived)
+        if (_gameObjectPlayerRedArrived && _gameObjectPlayerBlueArrived)
         {
-            movePlayersOutOfTube = false;
-            EnablePlayer(mario);
-            EnablePlayer(luigi);
-            marioEnteringTube = false;
-            luigiEnteringTube = false;
-            marioArrivedInTube = false;
-            luigiArrivedInTube = false;
+            _isMovingPlayersOutOfTube = false;
+            EnablePlayer(_gameObjectPlayerRed);
+            EnablePlayer(_gameObjectPlayerBlue);
+            _isPlayerRedEnteringTube = false;
+            _isPlayerBlueEnteringTube = false;
+            _isPlayerRedArrivedInTube = false;
+            _isPlayerBlueArrivedInTube = false;
         }
     }
 
@@ -147,26 +147,26 @@ public class TubeScript : MonoBehaviour
         Keyboard kb = Keyboard.current;
         if (kb == null) return;
 
-        if (pc.assignedHand == PlayerController.Hand.Left && !marioEnteringTube && !marioArrivedInTube)
+        if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Red && !_isPlayerRedEnteringTube && !_isPlayerRedArrivedInTube)
         {
             if (kb.sKey.wasPressedThisFrame)
             {
-                mario = pc.gameObject;
-                DisablePlayer(mario);
-                tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
-                marioEnteringTube = true;
-                if (GetAudioScript() != null) audioScript.PlayAudio(soundTube);
+                _gameObjectPlayerRed = pc.gameObject;
+                DisablePlayer(_gameObjectPlayerRed);
+                _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
+                _isPlayerRedEnteringTube = true;
+                if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
             }
         }
-        else if (pc.assignedHand == PlayerController.Hand.Right && !luigiEnteringTube && !luigiArrivedInTube)
+        else if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Blue && !_isPlayerBlueEnteringTube && !_isPlayerBlueArrivedInTube)
         {
             if (kb.downArrowKey.wasPressedThisFrame)
             {
-                luigi = pc.gameObject;
-                DisablePlayer(luigi);
-                tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
-                luigiEnteringTube = true;
-                if (GetAudioScript() != null) audioScript.PlayAudio(soundTube);
+                _gameObjectPlayerBlue = pc.gameObject;
+                DisablePlayer(_gameObjectPlayerBlue);
+                _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
+                _isPlayerBlueEnteringTube = true;
+                if (GetAudioScript() != null) _audioScript.PlayAudio(soundTube);
             }
         }
     }

@@ -5,21 +5,21 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour {
 
     [SerializeField] private float moveSpeed, playerPushForce, enemyBounceForce, raycastDistanceGround, raycastDistanceFront, raycastDistanceBack;
-    [SerializeField] private bool moveLeft, enemyStunned, enemyHit, enemyFalling;
+    [SerializeField] private bool isMovingLeft, enemyStunned, enemyHit, isEnemyFalling;
 
-    private float tempVelocity;
-    private bool bounceKill, stunnedByFireBall, killedByFireBall;
+    private float _tempVelocity;
+    private bool _isBounceKill, _stunnedByFireBall, _killedByFireBall;
 
-    private RaycastHit2D frontRaycastHit, backRaycastHit, groundRaycastHit, groundRaycastHitFallDamage;
+    private RaycastHit2D _frontRaycastHit, _backRaycastHit, _groundRaycastHit, __groundRaycastHitFallDamage;
     public LayerMask playerLayer, groundLayer;
-    private Vector2 tempScale;
+    private Vector2 _tempScaleVec;
 
     public Transform groundCheckPosition;
-    private CircleCollider2D enemyCircleCollider2D;
-    private Rigidbody2D enemyBody;
-    private Animator animator;
+    private CircleCollider2D _enemyCircleCollider2D;
+    private Rigidbody2D _enemyRb;
+    private Animator _animator;
     public AudioClip fireBallHit, soundPlayerStunEnemy;
-    private AudioScript audioScript;
+    private AudioScript _audioScript;
     
     public enum WithFireBallState	{ NeutralToFireBall, StunnedByFireBall, KilledByFireBall }
     public WithFireBallState withFireBallState;
@@ -28,14 +28,14 @@ public class EnemyScript : MonoBehaviour {
 
     // Awake is used for initialization
     void Awake () {
-        enemyBody = GetComponent<Rigidbody2D> ();
-        enemyCircleCollider2D = GetComponent<CircleCollider2D> ();
-        animator = GetComponent<Animator> ();
-        audioScript = GetComponent<AudioScript> ();
+        _enemyRb = GetComponent<Rigidbody2D> ();
+        _enemyCircleCollider2D = GetComponent<CircleCollider2D> ();
+        _animator = GetComponent<Animator> ();
+        _audioScript = GetComponent<AudioScript> ();
 
         enemyStunned = false;
-        enemyFalling = false;
-        bounceKill = false;
+        isEnemyFalling = false;
+        _isBounceKill = false;
 
         enemyBounceForce = 3f;
         playerPushForce = 6f;
@@ -46,13 +46,13 @@ public class EnemyScript : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start () {
-        moveLeft = true;
+        isMovingLeft = true;
         InitializeWithFireBallState (withFireBallState);
     }
 
     // Update is called once per frame
     void Update () {
-        if ( !bounceKill ) {
+        if ( !_isBounceKill ) {
             CheckForGroundBelow ();
             CheckForObstacle ();
             CheckForPlayer ();
@@ -61,29 +61,29 @@ public class EnemyScript : MonoBehaviour {
 
     // FixedUpdate is called every couple of frames, used for physics
     void FixedUpdate () {
-        MoveEnemy ( moveLeft, moveSpeed );
+        MoveEnemy ( isMovingLeft, moveSpeed );
     }
 
     void CorrectColliderOffset (float x, float y) { // small correction because of sprite going off-center
-        enemyCircleCollider2D.offset = new Vector2 (x, y);
+        _enemyCircleCollider2D.offset = new Vector2 (x, y);
     }
 
     void InitializeWithFireBallState (WithFireBallState fS) {
         switch ( fS ) {
             case WithFireBallState.NeutralToFireBall:
 				withFireBallState = fS;
-				killedByFireBall = false;
-                stunnedByFireBall = false;
+				_killedByFireBall = false;
+                _stunnedByFireBall = false;
 				break;
             case WithFireBallState.StunnedByFireBall:
                 withFireBallState = fS;
-				killedByFireBall = false;
-                stunnedByFireBall = !killedByFireBall;
+				_killedByFireBall = false;
+                _stunnedByFireBall = !_killedByFireBall;
                 break;
 			case WithFireBallState.KilledByFireBall:
 				withFireBallState = fS;
-				killedByFireBall = true;
-                stunnedByFireBall = !killedByFireBall;
+				_killedByFireBall = true;
+                _stunnedByFireBall = !_killedByFireBall;
 				break;
             default:
                 withFireBallState = WithFireBallState.NeutralToFireBall;
@@ -94,37 +94,37 @@ public class EnemyScript : MonoBehaviour {
     void ChangeEnemyDirection () {
         if ( !enemyStunned && !enemyHit ) {
             Debug.Log ("Enemy turns around!");
-            moveLeft = !moveLeft;
-            tempScale = transform.localScale;
-            if (moveLeft) {
-                tempScale.x = Mathf.Abs (tempScale.x);
+            isMovingLeft = !isMovingLeft;
+            _tempScaleVec = transform.localScale;
+            if (isMovingLeft) {
+                _tempScaleVec.x = Mathf.Abs (_tempScaleVec.x);
             } else {
-                tempScale.x = -Mathf.Abs (tempScale.x);
+                _tempScaleVec.x = -Mathf.Abs (_tempScaleVec.x);
             }
-            transform.localScale = tempScale;
+            transform.localScale = _tempScaleVec;
         }
     }
 
     void MoveEnemy (bool ml, float ms) {
         if ( !enemyStunned ) {
             if ( ml ) {
-                enemyBody.linearVelocity = new Vector2 (-ms, enemyBody.linearVelocity.y);
+                _enemyRb.linearVelocity = new Vector2 (-ms, _enemyRb.linearVelocity.y);
             } else {
-                enemyBody.linearVelocity = new Vector2 (ms, enemyBody.linearVelocity.y);
+                _enemyRb.linearVelocity = new Vector2 (ms, _enemyRb.linearVelocity.y);
             }
-            animator.Play ("EnemyMove");
+            _animator.Play ("EnemyMove");
         } else {
-            animator.Play ("EnemyStunned");
-            CorrectColliderOffset ( 0f, enemyCircleCollider2D.offset.y);
+            _animator.Play ("EnemyStunned");
+            CorrectColliderOffset ( 0f, _enemyCircleCollider2D.offset.y);
             //StartCoroutine ( DisableEnemy (disableObjectTime) );
             //Destroy (gameObject, destroyObjectTime);
         }
     }
 
     void PushEnemy (float pVx) {
-        if ( !enemyFalling ) {
+        if ( !isEnemyFalling ) {
             Debug.Log ("Push!");
-            enemyBody.linearVelocity = new Vector2 ( pVx, enemyBody.linearVelocity.y );
+            _enemyRb.linearVelocity = new Vector2 ( pVx, _enemyRb.linearVelocity.y );
         }
     }
 
@@ -143,10 +143,10 @@ public class EnemyScript : MonoBehaviour {
 
     void CheckForPlayer () {
         
-        frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.left, raycastDistanceFront, playerLayer);
-        backRaycastHit = Physics2D.Raycast (transform.position, Vector2.right, raycastDistanceBack, playerLayer);
+        _frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.left, raycastDistanceFront, playerLayer);
+        _backRaycastHit = Physics2D.Raycast (transform.position, Vector2.right, raycastDistanceBack, playerLayer);
 
-        if ( frontRaycastHit ) {
+        if ( _frontRaycastHit ) {
             if ( enemyStunned ) {
                 PushEnemy (playerPushForce);
             } else {
@@ -154,7 +154,7 @@ public class EnemyScript : MonoBehaviour {
 			}
 		}
         
-        if ( backRaycastHit ) {
+        if ( _backRaycastHit ) {
             if ( enemyStunned ) {
                 PushEnemy (-playerPushForce);
             } else {
@@ -165,17 +165,17 @@ public class EnemyScript : MonoBehaviour {
 
     void CheckForGroundBelow () {
         if ( !enemyStunned ) {
-            groundRaycastHit = Physics2D.Raycast (groundCheckPosition.position, Vector2.down, raycastDistanceGround, groundLayer);
-            groundRaycastHitFallDamage = Physics2D.Raycast (transform.position, Vector2.down, 2f, groundLayer);
+            _groundRaycastHit = Physics2D.Raycast (groundCheckPosition.position, Vector2.down, raycastDistanceGround, groundLayer);
+            __groundRaycastHitFallDamage = Physics2D.Raycast (transform.position, Vector2.down, 2f, groundLayer);
 
-            if ( !groundRaycastHit ) {
+            if ( !_groundRaycastHit ) {
                 //Debug.Log ("No ground below!");
                 ChangeEnemyDirection ();
 		    }
 
-            if ( !groundRaycastHitFallDamage ) {
+            if ( !__groundRaycastHitFallDamage ) {
                 Debug.Log ("Enemy fall damage!");
-                enemyFalling = true;
+                isEnemyFalling = true;
                 enemyStunned = true;
 		    }
         }
@@ -183,10 +183,10 @@ public class EnemyScript : MonoBehaviour {
     
     void CheckForObstacle () {
         if ( !enemyStunned ) {
-            if ( moveLeft ) frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.left, raycastDistanceFront + 0.25f, groundLayer);
-            else frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.right, raycastDistanceFront + 0.25f, groundLayer);
+            if ( isMovingLeft ) _frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.left, raycastDistanceFront + 0.25f, groundLayer);
+            else _frontRaycastHit = Physics2D.Raycast (transform.position, Vector2.right, raycastDistanceFront + 0.25f, groundLayer);
 
-            if ( frontRaycastHit ) {
+            if ( _frontRaycastHit ) {
                 Debug.Log ("Obstacle in front of enemy!");
                 ChangeEnemyDirection ();
 		    }
@@ -194,39 +194,39 @@ public class EnemyScript : MonoBehaviour {
 	}
 
     public void BounceKillEnemy () {
-        bounceKill = true;
-        BounceEnemyUp (enemyBody.linearVelocity.x, enemyBounceForce);
-        enemyBody.GetComponent<Collider2D> ().isTrigger = true;
-        enemyBody.transform.position = new Vector3 (enemyBody.transform.position.x, enemyBody.transform.position.y, -5f);
+        _isBounceKill = true;
+        BounceEnemyUp (_enemyRb.linearVelocity.x, enemyBounceForce);
+        _enemyRb.GetComponent<Collider2D> ().isTrigger = true;
+        _enemyRb.transform.position = new Vector3 (_enemyRb.transform.position.x, _enemyRb.transform.position.y, -5f);
         //Destroy (gameObject, 0.3f);
         enemyHit = true;
 	}
 
     void BounceEnemyUp (float pvx, float f) {
-        enemyBody.linearVelocity = new Vector2 (pvx, f);
+        _enemyRb.linearVelocity = new Vector2 (pvx, f);
 	}
 
     public void EnemyPlayAudio (AudioClip sound) {
-        audioScript.PlayAudio (sound);
+        _audioScript.PlayAudio (sound);
 	}
 
     public void EnemPlayAudioWaitToFinishClip (AudioClip sound) {
-        audioScript.PlayAudioWaitToFinishClip (sound);
+        _audioScript.PlayAudioWaitToFinishClip (sound);
 	}
 
     void OnTriggerEnter2D (Collider2D other) {
-        if (other.gameObject.tag == TagScript.TurnEnemyTag) {
+        if (other.gameObject.tag == TagScript.TURN_ENEMY_TAG) {
             if (!enemyStunned) ChangeEnemyDirection ();
         }
 
-        if (other.gameObject.tag == TagScript.PlayerTag) {
-            audioScript.PlayAudioWaitToFinishClip (soundPlayerStunEnemy);
+        if (other.gameObject.tag == TagScript.PLAYER_TAG) {
+            _audioScript.PlayAudioWaitToFinishClip (soundPlayerStunEnemy);
         }
 
-        if (other.gameObject.tag == TagScript.FireBallTag) {
-            audioScript.PlayAudio ( fireBallHit );
-            if ( stunnedByFireBall ) enemyStunned = true;
-            if ( killedByFireBall ) {
+        if (other.gameObject.tag == TagScript.FIRE_BALL_TAG) {
+            _audioScript.PlayAudio ( fireBallHit );
+            if ( _stunnedByFireBall ) enemyStunned = true;
+            if ( _killedByFireBall ) {
                 if ( !enemyHit ) BounceKillEnemy ();
             }
             //else {
@@ -236,7 +236,7 @@ public class EnemyScript : MonoBehaviour {
     }
 
 	void OnCollisionEnter2D (Collision2D other) {
-		if (other.gameObject.tag == TagScript.EnemyTag) {
+		if (other.gameObject.tag == TagScript.ENEMY_TAG) {
             ChangeEnemyDirection ();
         }
     }

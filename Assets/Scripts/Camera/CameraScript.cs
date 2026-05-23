@@ -9,17 +9,17 @@ public class CameraScript : MonoBehaviour {
     public float cameraSmoothTime, cameraZoom, maxZoom, minZoom, zoomLimiter;
     
     public Vector3 offset;
-    private Vector3 cameraCenterPoint, velocity;
-    private Bounds moveBounds, zoomBounds;
-    private bool hasSnapped;
+    private Vector3 _cameraCenterPoint, _velocityVec;
+    private Bounds _moveBounds, _zoomBounds;
+    private bool _hasSnapped;
 
     public List<Transform> cameraTargetList = new List<Transform>();
-    private Camera mainCamera;
+    private Camera _mainCamera;
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
     void Awake() {
-        mainCamera = GetComponent<Camera> ();
+        _mainCamera = GetComponent<Camera> ();
         offset = new Vector3 ( 0f, 0f, -10f);
         cameraSmoothTime = 0.5f;
         minZoom = 10f;
@@ -28,11 +28,11 @@ public class CameraScript : MonoBehaviour {
     }
 
 	void LateUpdate () {
-        if (!hasSnapped && cameraTargetList.Count > 0)
+        if (!_hasSnapped && cameraTargetList.Count > 0)
         {
-            cameraCenterPoint = GetCameraCenterPoint ();
-            transform.position = cameraCenterPoint + offset;
-            hasSnapped = true;
+            _cameraCenterPoint = GetCameraCenterPoint ();
+            transform.position = _cameraCenterPoint + offset;
+            _hasSnapped = true;
         }
         MoveCamera ();
         ZoomCamera ();
@@ -50,32 +50,32 @@ public class CameraScript : MonoBehaviour {
         if ( cameraTargetList.Count == 1 ) {
             return cameraTargetList[0].position;
 		}
-        moveBounds = new Bounds ( cameraTargetList[0].position, Vector3.zero );
+        _moveBounds = new Bounds ( cameraTargetList[0].position, Vector3.zero );
         for ( int i = 0; i < cameraTargetList.Count; i++ ) {
-            moveBounds.Encapsulate ( cameraTargetList[i].position );
+            _moveBounds.Encapsulate ( cameraTargetList[i].position );
 		}
-        return moveBounds.center;
+        return _moveBounds.center;
 	}
 
     float GetMaxPlayerDistance () {
-        zoomBounds = new Bounds ( cameraTargetList[0].position, Vector3.zero );
+        _zoomBounds = new Bounds ( cameraTargetList[0].position, Vector3.zero );
         for ( int i = 0; i < cameraTargetList.Count; i++ ) {
-            zoomBounds.Encapsulate ( cameraTargetList[i].position );
+            _zoomBounds.Encapsulate ( cameraTargetList[i].position );
 		}
-        return zoomBounds.size.x;
+        return _zoomBounds.size.x;
 	}
 
     void MoveCamera () {
         if ( cameraTargetList.Count <= 0 ) return;
-		cameraCenterPoint = GetCameraCenterPoint ();
-        //transform.position = cameraCenterPoint + offset;
-        transform.position = Vector3.SmoothDamp ( transform.position, cameraCenterPoint + offset, ref velocity, cameraSmoothTime);
+		_cameraCenterPoint = GetCameraCenterPoint ();
+        //transform.position = _cameraCenterPoint + offset;
+        transform.position = Vector3.SmoothDamp ( transform.position, _cameraCenterPoint + offset, ref _velocityVec, cameraSmoothTime);
     }
 
     void ZoomCamera () {
         if ( cameraTargetList.Count <= 0 ) return;
         cameraZoom = Mathf.Lerp ( maxZoom, minZoom, GetMaxPlayerDistance () / zoomLimiter );
-        mainCamera.orthographicSize = Mathf.Lerp ( mainCamera.orthographicSize, cameraZoom, Time.deltaTime );
+        _mainCamera.orthographicSize = Mathf.Lerp ( _mainCamera.orthographicSize, cameraZoom, Time.deltaTime );
 	}
 
 } //end of class

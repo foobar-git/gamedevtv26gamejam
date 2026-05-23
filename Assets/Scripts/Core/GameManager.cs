@@ -5,8 +5,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("Characters")]
-    public PlayerController playerLeft;
-    public PlayerController playerRight;
+    public PlayerController playerControllerRed;
+    public PlayerController playerControllerBlue;
 
     [Header("Camera")]
     public CameraScript cameraScript;
@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public int sharedCoins = 0;
 
     [Header("Start Point")]
-    public Transform startPoint;
+    public Transform startPointTransform;
 
     void Awake()
     {
@@ -35,9 +35,9 @@ public class GameManager : MonoBehaviour
         if (cameraScript.cameraTargetList == null)
             cameraScript.cameraTargetList = new System.Collections.Generic.List<Transform>();
 
-        if (playerLeft != null)
-            cameraScript.AddCameraTarget(playerLeft.transform);
-        if (playerRight != null)
-            cameraScript.AddCameraTarget(playerRight.transform);
+        if (playerControllerRed != null)
+            cameraScript.AddCameraTarget(playerControllerRed.transform);
+        if (playerControllerBlue != null)
+            cameraScript.AddCameraTarget(playerControllerBlue.transform);
     }
 }

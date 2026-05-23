@@ -4,17 +4,17 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
-    public enum Hand { Left, Right }
+    public enum PlayerCharacter { Red, Blue }
 
     [Header("Assignment")]
-    public Hand assignedHand;
+    public PlayerCharacter assignedPlayerCharacter;
     public CharacterDataSO characterData;
 
     [Header("References")]
-    public Transform groundCheckPosition;
-    public Transform headCheckPosition;
-    public Transform fireBallSocketPosition;
-    public Transform savePoint;
+    public Transform groundCheckTransform;
+    public Transform headCheckTransform;
+    public Transform fireBallSocketTransform;
+    public Transform savePointTransform;
     public GameObject fireBall;
     public GameObject stompParticles;
     public TextMeshPro hudLives;
@@ -47,51 +47,51 @@ public class PlayerController : MonoBehaviour
     public LayerMask enemyLayer;
     public LayerMask playerLayer;
 
-    private Collider2D groundCheckRayHit;
-    private Collider2D playerOnEnemyCheckRayHit;
-    private Collider2D playerOnPlayerCheckRayHit;
-    private Collider2D playerHeadCheckRayHit;
+    private Collider2D _groundCheckCollider;
+    private Collider2D _playerOnEnemyCollider;
+    private Collider2D _playerOnPlayerCollider;
+    private Collider2D _playerHeadCollider;
 
-    private GameObject newStompParticlesAnim;
-    private AudioScript audioScript;
-    private AudioScript gameMasterAudioScript;
-    private EnemyScript enemyScript;
-    private Rigidbody2D playerBody;
-    private Animator animator;
+    private GameObject _newStompParticlesAnim;
+    private AudioScript _audioScriptSelf;
+    private AudioScript __audioScriptSelfGameMaster;
+    private EnemyScript _enemyScript;
+    private Rigidbody2D _playerRb;
+    private Animator _animator;
 
-    private float inputH;
-    private bool jump;
-    private bool shoot;
-    private bool playerDied;
-    private bool playerSaved;
-    private bool playerOnGround;
-    private bool playerJumped;
-    private bool playerSwimming;
-    private bool jumpButtonReleased;
+    private float _inputH;
+    private bool _isJumpPressed;
+    private bool _isShootPressed;
+    private bool _playerDied;
+    private bool _playerSaved;
+    private bool _isOnGround;
+    private bool _playerJumped;
+    private bool _isSwimming;
+    private bool _jumpButtonReleased;
 
-    private float moveSpeed;
-    private float defaultMoveSpeed;
-    private Vector3 newPosition;
-    private Vector2 tempScale;
+    private float _moveSpeed;
+    private float _defaultMoveSpeed;
+    private Vector3 _newPosition;
+    private Vector2 _tempScale;
 
     private const float SWIM_SPEED = 2f;
     private const float SWIM_FORCE = 3f;
     private const float DEFAULT_GRAVITY_SCALE = 2f;
     private const float IN_WATER_GRAVITY_SCALE = 0.5f;
     private const float DISABLE_PLAYER_TIME = 2f;
-    private float groundRaycastDistance;
-    private float jumpForce;
-    private float stunBounceForce;
+    private float _groundRaycastDistance;
+    private float _jumpForce;
+    private float _stunBounceForce;
 
     void Awake()
     {
-        playerBody = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        audioScript = GetComponent<AudioScript>();
-        if (GameManager.Instance != null) gameMasterAudioScript = GameManager.Instance.GetComponent<AudioScript>();
+        _playerRb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _audioScriptSelf = GetComponent<AudioScript>();
+        if (GameManager.Instance != null) __audioScriptSelfGameMaster = GameManager.Instance.GetComponent<AudioScript>();
 
         GameObject go = GameObject.Find("Main Camera");
-        if (go != null) cameraScript = go.GetComponent<CameraScript>();
+        if (go != null) _cameraScript = go.GetComponent<CameraScript>();
         else Debug.LogWarning("PlayerController: Main Camera not found");
 
         go = GameObject.Find("hudLives");
@@ -104,34 +104,34 @@ public class PlayerController : MonoBehaviour
 
         if (characterData != null)
         {
-            defaultMoveSpeed = characterData.moveSpeed;
-            jumpForce = characterData.jumpForce;
-            stunBounceForce = characterData.stunBounceForce;
+            _defaultMoveSpeed = characterData.moveSpeed;
+            _jumpForce = characterData.jumpForce;
+            _stunBounceForce = characterData.stunBounceForce;
             playerScaleSmall = characterData.scaleSmall;
             playerScaleNormal = characterData.scaleNormal;
             playerScaleLarge = characterData.scaleLarge;
         }
         else
         {
-            defaultMoveSpeed = 4f;
-            jumpForce = 11f;
-            stunBounceForce = 3f;
+            _defaultMoveSpeed = 4f;
+            _jumpForce = 11f;
+            _stunBounceForce = 3f;
             playerScaleSmall = new Vector2(0.6f, 0.6f);
             playerScaleNormal = new Vector2(1f, 1f);
             playerScaleLarge = new Vector2(2f, 2f);
         }
 
-        moveSpeed = defaultMoveSpeed;
-        groundRaycastDistance = transform.localScale.x / 5f;
+        _moveSpeed = _defaultMoveSpeed;
+        _groundRaycastDistance = transform.localScale.x / 5f;
         playerDirection = 1;
-        jumpButtonReleased = true;
+        _jumpButtonReleased = true;
         playerState = PlayerState.PlayerSmall;
     }
 
     void Start()
     {
-        if (GameManager.Instance != null && GameManager.Instance.startPoint != null)
-            transform.position = GameManager.Instance.startPoint.position;
+        if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
+            transform.position = GameManager.Instance.startPointTransform.position;
 
         if (hudLives != null) hudLives.text = playerLives.ToString();
         if (hudCoins != null) hudCoins.text = playerCoins.ToString();
@@ -141,18 +141,18 @@ public class PlayerController : MonoBehaviour
     {
         if (InputProvider.Instance == null) return;
 
-        HandInput input = assignedHand == Hand.Left
-            ? InputProvider.Instance.GetLeftHand()
-            : InputProvider.Instance.GetRightHand();
+        PlayerCharacterInput input = assignedPlayerCharacter == PlayerCharacter.Red
+            ? InputProvider.Instance.GetRedInput()
+            : InputProvider.Instance.GetBlueInput();
 
-        inputH = input.horizontal;
-        jump = input.jumpPressed;
-        shoot = input.shootPressed;
+        _inputH = input.horizontal;
+        _isJumpPressed = input.jumpPressed;
+        _isShootPressed = input.shootPressed;
 
-        if (!playerDied)
+        if (!_playerDied)
         {
             if (playerControlsEnabled)
-                PlayerMoveInput(inputH, moveSpeed, jump, shoot);
+                PlayerMoveInput(_inputH, _moveSpeed, _isJumpPressed, _isShootPressed);
 
             CheckIfPlayerHeadButt();
             CheckIfPlayerOnGround();
@@ -164,103 +164,103 @@ public class PlayerController : MonoBehaviour
         if (h > 0)
         {
             playerDirection = 1;
-            ChangePlayerDirection(playerDirection, ms, playerBody.linearVelocity.y, "playerMoveAnimParam", true);
+            ChangePlayerDirection(playerDirection, ms, _playerRb.linearVelocity.y, "playerMoveAnimParam", true);
         }
         else if (h < 0)
         {
             playerDirection = -1;
-            ChangePlayerDirection(playerDirection, -ms, playerBody.linearVelocity.y, "playerMoveAnimParam", true);
+            ChangePlayerDirection(playerDirection, -ms, _playerRb.linearVelocity.y, "playerMoveAnimParam", true);
         }
         else
         {
-            ChangePlayerDirection(0f, playerBody.linearVelocity.y, "playerMoveAnimParam", false);
+            ChangePlayerDirection(0f, _playerRb.linearVelocity.y, "playerMoveAnimParam", false);
         }
 
-        if (!playerSwimming)
+        if (!_isSwimming)
         {
-            animator.SetBool("playerSwimAnimParam", false);
-            playerBody.gravityScale = DEFAULT_GRAVITY_SCALE;
-            moveSpeed = defaultMoveSpeed;
-            if (playerOnGround && !playerJumped && jumpButtonReleased)
+            _animator.SetBool("playerSwimAnimParam", false);
+            _playerRb.gravityScale = DEFAULT_GRAVITY_SCALE;
+            _moveSpeed = _defaultMoveSpeed;
+            if (_isOnGround && !_playerJumped && _jumpButtonReleased)
             {
                 if (j)
                 {
-                    playerJumped = true;
-                    jumpButtonReleased = false;
-                    ChangePlayerDirection(playerBody.linearVelocity.x, jumpForce, "playerJumpAnimParam", true);
-                    audioScript.PlayAudio(soundPlayerJump);
+                    _playerJumped = true;
+                    _jumpButtonReleased = false;
+                    ChangePlayerDirection(_playerRb.linearVelocity.x, _jumpForce, "playerJumpAnimParam", true);
+                    _audioScriptSelf.PlayAudio(soundPlayerJump);
                 }
             }
-            else if (!playerOnGround || playerOnGround)
+            else if (!_isOnGround || _isOnGround)
             {
                 if (j)
                 {
-                    jumpButtonReleased = true;
-                    ChangePlayerDirection(playerBody.linearVelocity.x, playerBody.linearVelocity.y - 4f, "playerJumpAnimParam", true);
+                    _jumpButtonReleased = true;
+                    ChangePlayerDirection(_playerRb.linearVelocity.x, _playerRb.linearVelocity.y - 4f, "playerJumpAnimParam", true);
                 }
             }
         }
         else
         {
-            playerBody.gravityScale = IN_WATER_GRAVITY_SCALE;
-            moveSpeed = SWIM_SPEED;
+            _playerRb.gravityScale = IN_WATER_GRAVITY_SCALE;
+            _moveSpeed = SWIM_SPEED;
             if (j)
             {
-                ChangePlayerDirection(playerBody.linearVelocity.x, SWIM_FORCE, "playerSwimAnimParam", true);
-                audioScript.PlayAudio(soundPlayerSwim);
+                ChangePlayerDirection(_playerRb.linearVelocity.x, SWIM_FORCE, "playerSwimAnimParam", true);
+                _audioScriptSelf.PlayAudio(soundPlayerSwim);
             }
         }
 
         if (playerCanShoot && s)
         {
-            GameObject newBullet = Instantiate(fireBall, fireBallSocketPosition.position, Quaternion.identity);
+            GameObject newBullet = Instantiate(fireBall, fireBallSocketTransform.position, Quaternion.identity);
             newBullet.GetComponent<FireBallScript>().PlayerDirectionToFireBallSpeed(true, playerDirection);
-            audioScript.PlayAudio(soundPlayerShootFireBall);
+            _audioScriptSelf.PlayAudio(soundPlayerShootFireBall);
         }
     }
 
     void ChangePlayerDirection(float pX, float pY, string a, bool b)
     {
-        playerBody.linearVelocity = new Vector2(pX, pY);
-        animator.SetBool(a, b);
+        _playerRb.linearVelocity = new Vector2(pX, pY);
+        _animator.SetBool(a, b);
     }
 
     void ChangePlayerDirection(int direction, float pX, float pY, string a, bool b)
     {
-        tempScale.x = Mathf.Abs(transform.localScale.x) * direction;
-        tempScale.y = transform.localScale.y;
-        transform.localScale = tempScale;
-        playerBody.linearVelocity = new Vector2(pX, pY);
-        animator.SetBool(a, b);
+        _tempScale.x = Mathf.Abs(transform.localScale.x) * direction;
+        _tempScale.y = transform.localScale.y;
+        transform.localScale = _tempScale;
+        _playerRb.linearVelocity = new Vector2(pX, pY);
+        _animator.SetBool(a, b);
     }
 
     void CheckIfPlayerOnGround()
     {
-        groundCheckRayHit = Physics2D.OverlapCircle(groundCheckPosition.position, groundRaycastDistance, groundLayer);
-        playerOnEnemyCheckRayHit = Physics2D.OverlapCircle(groundCheckPosition.position, groundRaycastDistance, enemyLayer);
-        playerOnPlayerCheckRayHit = Physics2D.OverlapCircle(groundCheckPosition.position, groundRaycastDistance, playerLayer);
+        _groundCheckCollider = Physics2D.OverlapCircle(groundCheckTransform.position, _groundRaycastDistance, groundLayer);
+        _playerOnEnemyCollider = Physics2D.OverlapCircle(groundCheckTransform.position, _groundRaycastDistance, enemyLayer);
+        _playerOnPlayerCollider = Physics2D.OverlapCircle(groundCheckTransform.position, _groundRaycastDistance, playerLayer);
 
-        if (groundCheckRayHit || playerOnPlayerCheckRayHit)
+        if (_groundCheckCollider || _playerOnPlayerCollider)
         {
             PlayerOnGround(true);
-            playerJumped = false;
-            jumpButtonReleased = true;
+            _playerJumped = false;
+            _jumpButtonReleased = true;
         }
-        else if (playerOnEnemyCheckRayHit)
+        else if (_playerOnEnemyCollider)
         {
             PlayerOnGround(true);
-            playerJumped = false;
-            jumpButtonReleased = true;
-            enemyScript = playerOnEnemyCheckRayHit.GetComponent<EnemyScript>();
-            if (!enemyScript.EnemyStunned)
+            _playerJumped = false;
+            _jumpButtonReleased = true;
+            _enemyScript = _playerOnEnemyCollider.GetComponent<EnemyScript>();
+            if (!_enemyScript.EnemyStunned)
             {
-                BouncePlayerUp(playerBody.linearVelocity.x, stunBounceForce);
-                enemyScript.EnemyStunned = true;
+                BouncePlayerUp(_playerRb.linearVelocity.x, _stunBounceForce);
+                _enemyScript.EnemyStunned = true;
                 SpawnStompParticles();
-                if (playerOnEnemyCheckRayHit.name == "Snail" && gameMasterAudioScript != null)
-                    gameMasterAudioScript.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBells);
-                else if (playerOnEnemyCheckRayHit.name == "Beetle" && gameMasterAudioScript != null)
-                    gameMasterAudioScript.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBoing);
+                if (_playerOnEnemyCollider.name == "Snail" && __audioScriptSelfGameMaster != null)
+                    __audioScriptSelfGameMaster.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBells);
+                else if (_playerOnEnemyCollider.name == "Beetle" && __audioScriptSelfGameMaster != null)
+                    __audioScriptSelfGameMaster.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBoing);
             }
         }
         else
@@ -271,55 +271,55 @@ public class PlayerController : MonoBehaviour
 
     void PlayerOnGround(bool b)
     {
-        playerOnGround = b;
-        animator.SetBool("playerJumpAnimParam", !b);
+        _isOnGround = b;
+        _animator.SetBool("playerJumpAnimParam", !b);
     }
 
     void CheckIfPlayerHeadButt()
     {
-        playerHeadCheckRayHit = Physics2D.OverlapCircle(headCheckPosition.position, groundRaycastDistance, groundLayer);
-        if (playerHeadCheckRayHit)
-            moveSpeed = defaultMoveSpeed;
+        _playerHeadCollider = Physics2D.OverlapCircle(headCheckTransform.position, _groundRaycastDistance, groundLayer);
+        if (_playerHeadCollider)
+            _moveSpeed = _defaultMoveSpeed;
     }
 
     void BouncePlayerUp(float pvx, float f)
     {
-        playerBody.linearVelocity = new Vector2(pvx, f);
+        _playerRb.linearVelocity = new Vector2(pvx, f);
     }
 
     void SpawnStompParticles()
     {
-        newPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + -5f);
-        newStompParticlesAnim = Instantiate(stompParticles, newPosition, Quaternion.identity);
-        newStompParticlesAnim.GetComponent<ParticleSystem>().Play();
+        _newPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + -5f);
+        _newStompParticlesAnim = Instantiate(stompParticles, _newPosition, Quaternion.identity);
+        _newStompParticlesAnim.GetComponent<ParticleSystem>().Play();
     }
 
     void OnCollisionStay2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            if (!playerOnGround)
-                moveSpeed = 0.15f;
+            if (!_isOnGround)
+                _moveSpeed = 0.15f;
             else
-                moveSpeed = defaultMoveSpeed;
+                _moveSpeed = _defaultMoveSpeed;
         }
     }
 
     void OnCollisionExit2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Ground"))
-            moveSpeed = defaultMoveSpeed;
+            _moveSpeed = _defaultMoveSpeed;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!playerDied)
+        if (!_playerDied)
         {
-            if (!playerSaved && other.gameObject.CompareTag("SavePoint"))
+            if (!_playerSaved && other.gameObject.CompareTag("SavePoint"))
             {
-                audioScript.PlayAudioWaitToFinishClip(soundSavePoint);
-                savePoint = other.transform;
-                playerSaved = true;
+                _audioScriptSelf.PlayAudioWaitToFinishClip(soundSavePoint);
+                savePointTransform = other.transform;
+                _playerSaved = true;
             }
 
             if (other.gameObject.CompareTag("PickupFireFlower"))
@@ -338,36 +338,36 @@ public class PlayerController : MonoBehaviour
                 UpdatePlayerLives(1);
 
             if (other.gameObject.CompareTag("Water"))
-                playerSwimming = true;
+                _isSwimming = true;
 
             if (other.gameObject.CompareTag("KillBox"))
             {
                 PlayerDied();
-                playerDied = true;
+                _playerDied = true;
             }
         }
 
         if (other.gameObject.CompareTag("DestroyGameObjectBox"))
         {
-            playerBody.linearVelocity = Vector2.zero;
-            playerBody.simulated = false;
+            _playerRb.linearVelocity = Vector2.zero;
+            _playerRb.simulated = false;
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (!playerDied && other.gameObject.CompareTag("Water"))
-            playerSwimming = false;
+        if (!_playerDied && other.gameObject.CompareTag("Water"))
+            _isSwimming = false;
     }
 
     void PlayerDied()
     {
-        if (cameraScript != null) cameraScript.RemoveCameraTarget(transform);
-        audioScript.PlayAudioWaitToFinishClip(soundPlayerDied);
+        if (_cameraScript != null) _cameraScript.RemoveCameraTarget(transform);
+        _audioScriptSelf.PlayAudioWaitToFinishClip(soundPlayerDied);
         UpdatePlayerLives(-1);
-        animator.Play("PlayerHurt");
+        _animator.Play("PlayerHurt");
         StartCoroutine(EnumDisablePlayer(DISABLE_PLAYER_TIME));
-        BouncePlayerUp(playerBody.linearVelocity.x, stunBounceForce * 3f);
+        BouncePlayerUp(_playerRb.linearVelocity.x, _stunBounceForce * 3f);
     }
 
     public bool PlayerNotSmall()
@@ -409,7 +409,7 @@ public class PlayerController : MonoBehaviour
                 playerCanShoot = true;
                 break;
         }
-        groundRaycastDistance = transform.localScale.x / 5f;
+        _groundRaycastDistance = transform.localScale.x / 5f;
     }
 
     IEnumerator EnumDisablePlayer(float t)
@@ -420,8 +420,8 @@ public class PlayerController : MonoBehaviour
 
     void DisablePlayer(float t)
     {
-        playerBody.linearVelocity = Vector2.zero;
-        playerBody.simulated = false;
+        _playerRb.linearVelocity = Vector2.zero;
+        _playerRb.simulated = false;
         if (playerLives <= 0)
             gameObject.SetActive(false);
         else
@@ -436,17 +436,17 @@ public class PlayerController : MonoBehaviour
 
     void PlacePlayerOnSavePoint(float t)
     {
-        if (savePoint != null)
-            transform.position = savePoint.position;
-        else if (GameManager.Instance != null && GameManager.Instance.startPoint != null)
-            transform.position = GameManager.Instance.startPoint.position;
+        if (savePointTransform != null)
+            transform.position = savePointTransform.position;
+        else if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
+            transform.position = GameManager.Instance.startPointTransform.position;
 
         InitializePlayerState(PlayerState.PlayerSmall);
-        playerBody.simulated = true;
-        playerDied = false;
-        animator.Play("PlayerIdle");
-        if (cameraScript != null) cameraScript.AddCameraTarget(transform);
+        _playerRb.simulated = true;
+        _playerDied = false;
+        _animator.Play("PlayerIdle");
+        if (_cameraScript != null) _cameraScript.AddCameraTarget(transform);
     }
 
-    private CameraScript cameraScript;
+    private CameraScript _cameraScript;
 }

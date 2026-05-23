@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class TimerScript : MonoBehaviour {
 
-    private int width, height;
-    private Rect rectRight, rectLeft, rectInfo;
-    private GUIStyle labelStyleUpperLeft, labelStyleUpperRight;
-    private string currentTimeString, realTimeSinceStart, timeInfoString, debugLogString, timeString, timeSnapshotString;
-    private bool displayTimerOnScreen, timeActive, countDown, pauseTime;
+    private int _width, _height;
+    private Rect _rectRight, _rectLeft, _rectInfo;
+    private GUIStyle _labelStyleUpperLeft, _labelStyleUpperRight;
+    private string _currentTimeString, _realTimeSinceStart, _timeInfoString, _debugLogString, _timeString, _timeSnapshotString;
+    private bool _isDisplayingTimerOnScreen, _isTimeActive, _isCountingDown, _isTimePaused;
 
     [SerializeField] private float playTime, currentTime, startTime, stopTime, continueTime, fromStartTime, fromLoadTime;
     [SerializeField] private float temp, currentPauseGameTime, cumulativePauseGameTime, addToCountDownTime, addToCountDownTimeValue;
@@ -18,40 +18,40 @@ public class TimerScript : MonoBehaviour {
     //[SerializeField] private float fractions, days;
 
     void Awake () {
-        width = Screen.width;
-        height = Screen.height;
-        rectRight = new Rect (10, 10, width - 20, height - 20);
-        rectLeft = new Rect (10, 10, width - 20, height - 20);
-        rectInfo = new Rect (20, 60, 400, 600);
-        timeActive = false;
-        countDown = false;
-        pauseTime = false;
+        _width = Screen.width;
+        _height = Screen.height;
+        _rectRight = new Rect (10, 10, _width - 20, _height - 20);
+        _rectLeft = new Rect (10, 10, _width - 20, _height - 20);
+        _rectInfo = new Rect (20, 60, 400, 600);
+        _isTimeActive = false;
+        _isCountingDown = false;
+        _isTimePaused = false;
         countDownValue = 10f;
         addToCountDownTimeValue = 10f;
         addToPlayTimeValue = 10f;
         defaultTimeScaleValue = 1f;
         newTimeScaleValue = 5f;
-        displayTimerOnScreen = false;
+        _isDisplayingTimerOnScreen = false;
     }
 
 	void OnGUI () {
-        if ( displayTimerOnScreen ) {
+        if ( _isDisplayingTimerOnScreen ) {
             // Display the label in the window.
-            labelStyleUpperRight = new GUIStyle ( GUI.skin.GetStyle ("label") );
-            labelStyleUpperRight.alignment = TextAnchor.UpperRight;
-            labelStyleUpperLeft = new GUIStyle ( GUI.skin.GetStyle ("label") );
-            labelStyleUpperLeft.alignment = TextAnchor.UpperLeft;
+            _labelStyleUpperRight = new GUIStyle ( GUI.skin.GetStyle ("label") );
+            _labelStyleUpperRight.alignment = TextAnchor.UpperRight;
+            _labelStyleUpperLeft = new GUIStyle ( GUI.skin.GetStyle ("label") );
+            _labelStyleUpperLeft.alignment = TextAnchor.UpperLeft;
 
             // Modify the size of the font based on the window.
-            labelStyleUpperRight.fontSize = 6 * (width / 200);
-            labelStyleUpperLeft.fontSize = 6 * (width / 200);
+            _labelStyleUpperRight.fontSize = 6 * (_width / 200);
+            _labelStyleUpperLeft.fontSize = 6 * (_width / 200);
 
-            ShowTime (Time.realtimeSinceStartup, "Real time since start  ", rectRight, labelStyleUpperRight);
-            ShowTime (Time.time, "TimerClass ", rectLeft, labelStyleUpperLeft);
+            ShowTime (Time.realtimeSinceStartup, "Real time since start  ", _rectRight, _labelStyleUpperRight);
+            ShowTime (Time.time, "TimerClass ", _rectLeft, _labelStyleUpperLeft);
 
-            timeInfoString =    "Play Time:" + "\t\t\t" + playTime.ToString ("f1") + "\n" +
+            _timeInfoString =    "Play Time:" + "\t\t\t" + playTime.ToString ("f1") + "\n" +
                                 "Count Down Time:" + "\t\t" + countDownTime.ToString ("f1") + "\n" +
-                                "Start PlayTime:" + "\t\t" + timeSnapshotString + "\n" +
+                                "Start PlayTime:" + "\t\t" + _timeSnapshotString + "\n" +
                                 "From Start Time:" + "\t\t" + fromStartTime.ToString ("f0") + "\n" +
                                 "Stop Time:" + "\t\t" + stopTime.ToString ("f0") + "\n" +
                                 "From Load Time:" + "\t\t" + fromLoadTime.ToString ("f0") + "\n" +
@@ -69,7 +69,7 @@ public class TimerScript : MonoBehaviour {
                                 "8 - Add to count down time by " + addToCountDownTimeValue + "\n" +
                                 "9 - Add to playTime by " + addToPlayTimeValue + "\n" +
                                 "0 - Hold to set Time.timeScale to " + newTimeScaleValue;
-            GUI.Label (rectInfo, timeInfoString);
+            GUI.Label (_rectInfo, _timeInfoString);
         }
     }
 
@@ -81,17 +81,17 @@ public class TimerScript : MonoBehaviour {
     void Timer (float t) {
         fromStartTime = Time.time;
 
-        if (timeActive) {
+        if (_isTimeActive) {
             playTime = (t - continueTime) + addToPlayTime;
             /*if (playTime < 0f) {
-                timeActive = false;
+                _isTimeActive = false;
                 playTime = 0f;
             }*/
             
-            if (countDown) {
+            if (_isCountingDown) {
                 countDownTime = countDownAmount + (countDownDelay - Time.time) + addToCountDownTime;
                 if (countDownTime < 0f) {
-                    countDown = false;
+                    _isCountingDown = false;
                     countDownTime = 0f;
                 }
             }
@@ -100,7 +100,7 @@ public class TimerScript : MonoBehaviour {
 
         }
         
-        if (pauseTime) {
+        if (_isTimePaused) {
             currentPauseGameTime = Time.time - stopTime;
             cumulativePauseGameTime = Time.time - stopTime + temp;
 		}
@@ -153,9 +153,9 @@ public class TimerScript : MonoBehaviour {
         }
 
         if ( Input.GetKeyUp (KeyCode.PageUp) ) {
-            displayTimerOnScreen = true;
+            _isDisplayingTimerOnScreen = true;
 		} else if ( Input.GetKeyUp (KeyCode.PageDown) ) {
-            displayTimerOnScreen = false;
+            _isDisplayingTimerOnScreen = false;
 		}
 
     }
@@ -170,20 +170,20 @@ public class TimerScript : MonoBehaviour {
 
     void ShowTime (float t, string debugLog, Rect r, GUIStyle s) {
         DefineTime (t);
-        timeString = string.Format ("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
-        timeString = debugLog + timeString;
-        GUI.Label (r, timeString, s);
+        _timeString = string.Format ("{0:00}:{1:00}:{2:00}", hours, minutes, seconds);
+        _timeString = debugLog + _timeString;
+        GUI.Label (r, _timeString, s);
     }
 
     string TakeTimeSnapshot (float h, float m, float s) {
-        timeSnapshotString = string.Format ("{0:00}:{1:00}:{2:00}", h, m, s);
-        return timeString;
+        _timeSnapshotString = string.Format ("{0:00}:{1:00}:{2:00}", h, m, s);
+        return _timeString;
 	}
 
     void StartTimer (float t) {
         Debug.Log ("Start playTime.");
-        timeActive = true;
-        pauseTime = false;
+        _isTimeActive = true;
+        _isTimePaused = false;
         continueTime = t;
         playTime = 0f;
         stopTime = 0f;
@@ -199,21 +199,21 @@ public class TimerScript : MonoBehaviour {
     void StopPlayTime (float t) {
         Debug.Log ("Stop playTime.");
         stopTime = t;
-        timeActive = false;
-        countDown = false;
-        pauseTime = true;
+        _isTimeActive = false;
+        _isCountingDown = false;
+        _isTimePaused = true;
 	}
 
     void ContinuePlayTime (float t) {
         Debug.Log ("Continue playTime.");
         continueTime = t - playTime + addToPlayTime;
-        timeActive = true;
-        pauseTime = false;
+        _isTimeActive = true;
+        _isTimePaused = false;
 	}
 
     void ResetPlayTime () {
         Debug.Log ("Reset playTime.");
-        timeActive = false;
+        _isTimeActive = false;
         playTime = 0f;
         stopTime = 0f;
         addToPlayTime = 0f;
@@ -221,8 +221,8 @@ public class TimerScript : MonoBehaviour {
 
     void CountDown (float cV) {
         Debug.Log ("Count down " + cV);
-        timeActive = true;
-        countDown = true;
+        _isTimeActive = true;
+        _isCountingDown = true;
         //countDownAmount = playTime;       // cunt down from current play time
         countDownAmount = cV;   // count down from given value in seconds
         countDownDelay = Time.time;
