@@ -254,9 +254,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   moveSpeed: 0.75
-  movePickup: 0
+  isMovingPickup: 0
   raycastDistanceFront: 0
-  moveLeft: 0
+  isMovingLeft: 0
 --- !u!95 &59161290
 Animator:
   serializedVersion: 3

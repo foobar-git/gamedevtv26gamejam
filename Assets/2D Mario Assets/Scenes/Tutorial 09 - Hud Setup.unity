@@ -3121,7 +3121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dfc2b9feba6dcf4fbda96b9bcde7aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPoint: {fileID: 54}
+  startPointTransform: {fileID: 54}
   soundDie: {fileID: 8300000, guid: cf4abc7b0a7f1084c8316b16bab11509, type: 3}
 --- !u!114 &236
 MonoBehaviour:

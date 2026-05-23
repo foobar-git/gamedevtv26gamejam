@@ -239,18 +239,18 @@ MonoBehaviour:
   soundBrickDestroy: {fileID: 8300000, guid: 26ff8d7f090b44a40b319dccae222778, type: 3}
   soundPickup: {fileID: 8300000, guid: e7aebffb7d6e66b45b1df9abd6204fa5, type: 3}
   soundCoin: {fileID: 8300000, guid: 7dc57b17c9863834691e3f976aa42d32, type: 3}
-  brick_solid: {fileID: 2100000, guid: 1f7a48aac6910ba46ac228f548a6f53d, type: 2}
-  coinBrickAnim: {fileID: 7741080263697216920, guid: d8445cbd98c58e444be62158b8dae5b3,
+  materialBrickSolid: {fileID: 2100000, guid: 1f7a48aac6910ba46ac228f548a6f53d, type: 2}
+  gameObjectCoinBrickAnim: {fileID: 7741080263697216920, guid: d8445cbd98c58e444be62158b8dae5b3,
     type: 3}
-  fireFlower: {fileID: 740412263707793762, guid: ca8e5cb4d2dc4734ba945cfcecfe63ac,
+  gameObjectFireFlower: {fileID: 740412263707793762, guid: ca8e5cb4d2dc4734ba945cfcecfe63ac,
     type: 3}
-  mushroom: {fileID: 1170763038782717808, guid: fc8fe7070dbb25c4792d29d92df31fb2,
+  gameObjectMushroom: {fileID: 1170763038782717808, guid: fc8fe7070dbb25c4792d29d92df31fb2,
     type: 3}
-  m1up: {fileID: 2750359546839558518, guid: 8cd67cbc1771acc4d9c26897900f19f5, type: 3}
-  brickParticles: {fileID: 4576636025621794486, guid: a1dfeae3ecc38b04c84a43760c1eb2e1,
+  gameObjectM1up: {fileID: 2750359546839558518, guid: 8cd67cbc1771acc4d9c26897900f19f5, type: 3}
+  gameObjectBrickParticles: {fileID: 4576636025621794486, guid: a1dfeae3ecc38b04c84a43760c1eb2e1,
     type: 3}
-  playerBumpsBrick: 0
-  randomBrick: 1
+  playerHasBumpedBrick: 0
+  isRandomBrick: 1
   brickState: 1
 --- !u!95 &9170524756822827265
 Animator:

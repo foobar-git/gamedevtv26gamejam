@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed_movePlayerInOutTubeAnim: 0
   speed_movePlayerTubeToTubeAnim: 0
-  otherTubeExit: {fileID: 3574489145192962115}
+  otherTubeExitTransform: {fileID: 3574489145192962115}
   soundTube: {fileID: 8300000, guid: 7e43819dec34de4408a3169733872a2f, type: 3}
 --- !u!1 &3574489145575991648
 GameObject:

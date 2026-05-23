@@ -254,6 +254,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   moveSpeed: 1
-  movePickup: 0
+  isMovingPickup: 0
   raycastDistanceFront: 0
-  moveLeft: 0
+  isMovingLeft: 0

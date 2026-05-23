@@ -9899,7 +9899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dfc2b9feba6dcf4fbda96b9bcde7aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPoint: {fileID: 0}
+  startPointTransform: {fileID: 0}
   soundDie: {fileID: 0}
 --- !u!114 &4315
 MonoBehaviour:

@@ -32,11 +32,11 @@ TagManager:
   - 
   - Ground
   - Enemy
-  - Player
+  - PlayerRed
   - EditorOnly
   - Background
   - Clouds
-  - Other Player
+  - PlayerBlue
   - Hud
   - 
   - 

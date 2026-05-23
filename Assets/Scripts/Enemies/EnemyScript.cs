@@ -2,13 +2,29 @@ using System.Collections;
 using UnityEngine;
 
 // Controls an enemy — patrol movement, ground-edge and obstacle detection,
-// player interaction (stomp stun, fireball reaction), and bounce-kill on brick bump.
+// player interaction (stomp stun, fireball reaction), bounce-kill on brick bump,
+// optional flying mode (gravity off, no ledge detection), and directional projectile shooting.
 public class EnemyScript : MonoBehaviour
 {
+    // configured per-enemy type in the Inspector — determines fireball reaction (none, stun, or kill)
+    public enum WithFireBallState { NeutralToFireBall, StunnedByFireBall, KilledByFireBall }
+    public enum ShootDirection { Left, Right, Up, Down }
+
     [SerializeField] private float moveSpeed, playerPushForce, enemyBounceForce, raycastDistanceGround, raycastDistanceFront, raycastDistanceBack;
     [SerializeField] private bool isMovingLeft, enemyStunned, enemyHit, isEnemyFalling;
 
+    [Header("Flying")]
+    [SerializeField] private bool isFlying;
+
+    [Header("Shooting")]
+    [SerializeField] private ShootDirection shootDirection;
+    [SerializeField] private float shootInterval;
+    [Tooltip("0 = pure gravity drop — no initial velocity, gravity does the work")]
+    [SerializeField] private float shootSpeed;
+    [SerializeField] private GameObject gameObjectProjectilePrefab;
+
     private bool _isBounceKill, _stunnedByFireBall, _killedByFireBall;
+    private float _shootTimer;
 
     private RaycastHit2D _frontRaycastHit, _backRaycastHit, _groundRaycastHit, _groundRaycastHitFallDamage;
     public LayerMask playerLayer, groundLayer;
@@ -21,8 +37,6 @@ public class EnemyScript : MonoBehaviour
     public AudioClip soundFireBallHit, soundPlayerStunEnemy;
     private AudioScript _audioScript;
 
-    // configured per-enemy type in the Inspector — determines fireball reaction (none, stun, or kill)
-    public enum WithFireBallState { NeutralToFireBall, StunnedByFireBall, KilledByFireBall }
     public WithFireBallState withFireBallState;
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +48,11 @@ public class EnemyScript : MonoBehaviour
         _animator = GetComponent<Animator>();
         _audioScript = GetComponent<AudioScript>();
 
+        if (isFlying)
+        {
+            _enemyRb.gravityScale = 0f;
+        }
+
         enemyStunned = false;
         isEnemyFalling = false;
         _isBounceKill = false;
@@ -43,6 +62,8 @@ public class EnemyScript : MonoBehaviour
         raycastDistanceGround = 0.2f;
         raycastDistanceFront = 0.25f;
         raycastDistanceBack = 0.25f;
+
+        _shootTimer = shootInterval;
     }
 
     void Start()
@@ -68,9 +89,51 @@ public class EnemyScript : MonoBehaviour
         {
             return;
         }
-        CheckForGroundBelow();
+        // flying enemies have no ledge to fall off — skip ground detection entirely
+        if (!isFlying)
+        {
+            CheckForGroundBelow();
+        }
         CheckForObstacle();
         CheckForPlayer();
+        TickShootTimer();
+    }
+
+    void TickShootTimer()
+    {
+        // shootInterval = 0 means shooting is disabled for this enemy
+        if (enemyStunned || shootInterval <= 0f || gameObjectProjectilePrefab == null)
+        {
+            return;
+        }
+        _shootTimer -= Time.deltaTime;
+        if (_shootTimer <= 0f)
+        {
+            Shoot();
+            _shootTimer = shootInterval;
+        }
+    }
+
+    void Shoot()
+    {
+        GameObject gameObjectProjectile = Instantiate(gameObjectProjectilePrefab, transform.position, Quaternion.identity);
+        Rigidbody2D projectileRb = gameObjectProjectile.GetComponent<Rigidbody2D>();
+        if (projectileRb != null)
+        {
+            projectileRb.linearVelocity = GetShootVelocity();
+        }
+    }
+
+    Vector2 GetShootVelocity()
+    {
+        switch (shootDirection)
+        {
+            case ShootDirection.Left:  return new Vector2(-shootSpeed, 0f);
+            case ShootDirection.Right: return new Vector2(shootSpeed, 0f);
+            case ShootDirection.Up:    return new Vector2(0f, shootSpeed);
+            case ShootDirection.Down:  return new Vector2(0f, -shootSpeed);
+            default:                   return new Vector2(-shootSpeed, 0f);
+        }
     }
 
     void CorrectColliderOffset(float x, float y) // small correction because of sprite going off-center
@@ -125,13 +188,15 @@ public class EnemyScript : MonoBehaviour
     {
         if (!enemyStunned)
         {
+            // flying enemies lock Y to 0 — prevents physics nudges from drifting their height
+            float vy = isFlying ? 0f : _enemyRb.linearVelocity.y;
             if (ml)
             {
-                _enemyRb.linearVelocity = new Vector2(-ms, _enemyRb.linearVelocity.y);
+                _enemyRb.linearVelocity = new Vector2(-ms, vy);
             }
             else
             {
-                _enemyRb.linearVelocity = new Vector2(ms, _enemyRb.linearVelocity.y);
+                _enemyRb.linearVelocity = new Vector2(ms, vy);
             }
             _animator.Play("EnemyMove");
         }

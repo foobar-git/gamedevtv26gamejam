@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 // Manages the two-player tube warp sequence. Both players must press down to enter
 // before travel begins — neither teleports until both are inside the tube.
@@ -8,6 +7,8 @@ public class TubeScript : MonoBehaviour
     private bool _isPlayerRedEnteringTube, _isPlayerBlueEnteringTube;
     private bool _isPlayerRedArrivedInTube, _isPlayerBlueArrivedInTube;
     private bool _isMovingPlayersTubeToTube, _isMovingPlayersOutOfTube;
+
+    [SerializeField] private bool _canEnterTube = true;
 
     [SerializeField] private float speed_movePlayerInOutTubeAnim, speed_movePlayerTubeToTubeAnim, tubeEntryExit_y;
 
@@ -186,15 +187,14 @@ public class TubeScript : MonoBehaviour
             return;
         }
 
-        Keyboard kb = Keyboard.current;
-        if (kb == null)
+        if (!_canEnterTube)
         {
             return;
         }
 
         if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Red && !_isPlayerRedEnteringTube && !_isPlayerRedArrivedInTube)
         {
-            if (kb.sKey.wasPressedThisFrame)
+            if (InputProvider.Instance != null && InputProvider.Instance.GetRedInput().shootPressed)
             {
                 _gameObjectPlayerRed = pc.gameObject;
                 DisablePlayer(_gameObjectPlayerRed);
@@ -209,7 +209,7 @@ public class TubeScript : MonoBehaviour
         }
         else if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Blue && !_isPlayerBlueEnteringTube && !_isPlayerBlueArrivedInTube)
         {
-            if (kb.downArrowKey.wasPressedThisFrame)
+            if (InputProvider.Instance != null && InputProvider.Instance.GetBlueInput().shootPressed)
             {
                 _gameObjectPlayerBlue = pc.gameObject;
                 DisablePlayer(_gameObjectPlayerBlue);

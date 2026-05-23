@@ -1,4 +1,4 @@
-## 2026-05-23
+## 2026-05-21
 - Moved AudioScript from GameMaster to GameManager: added AudioSource + AudioScript components to GameManager GameObject.
 - Updated PlayerController and TubeScript to reference GameManager's AudioScript instead of GameObject.Find("GameMaster").
 - Deleted GameMaster GameObject from scene.
@@ -10,7 +10,7 @@
 - Play mode verified: no runtime NREs, both characters tracked by camera, game stable.
 - Remaining: 3 "missing script" warnings on play mode entry (Library cache artifact from deleted scripts — cosmetic, no runtime impact).
 
-## 2026-05-23
+## 2026-05-22
 - Completed rename pass (TimerScript.cs — 8 remaining string/GUIStyle fields from prior session).
 - Renamed all player-identity references to neutral Red/Blue: mario/luigi, left/right across all scripts.
 - Renamed `Hand` enum → `PlayerCharacter`, values Left/Right → Red/Blue; updated all call sites.
@@ -28,3 +28,11 @@
 - CameraScript: redundant .transform on Transform parameter removed.
 - Comment pass across all 15 scripts: header comment on every file, inline WHY comments on non-obvious logic and invariants.
 
+## 2026-05-23
+- Fixed WASD bug: rename commit wiped `assignedPlayerCharacter` on Blue player, both defaulted to Red. Reassign in Inspector.
+- Same rename wiped Transform inspector refs on both players (groundCheck, headCheck, fireBallSocket, savePoint). Reassign in Inspector.
+- Added `isFlying` to `EnemyScript`: gravity off, Y locked, ground checks skipped. Non-flying enemies unaffected.
+- Added shoot system to `EnemyScript`: `ShootDirection` enum (L/R/U/D), interval timer, null-guarded so non-shooting enemies are safe.
+- Created `ProjectileScript`: gravity scale, size, lifetime, damage, optional hit effect — all Inspector-tunable.
+
+- New PlayerRed and PlayerBlue layers, players can now jump off each other

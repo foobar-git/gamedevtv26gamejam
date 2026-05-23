@@ -239,7 +239,7 @@ MonoBehaviour:
   soundPickup: {fileID: 8300000, guid: 7ded147555a813a44b2e009a747f62e7, type: 3}
   soundCoin: {fileID: 8300000, guid: 7dc57b17c9863834691e3f976aa42d32, type: 3}
   sound1up: {fileID: 8300000, guid: a6297bf07b227424e835a7703fe748d2, type: 3}
-  brick_solid: {fileID: 2100000, guid: 1f7a48aac6910ba46ac228f548a6f53d, type: 2}
+  materialBrickSolid: {fileID: 2100000, guid: 1f7a48aac6910ba46ac228f548a6f53d, type: 2}
   brickState: 0
 --- !u!95 &5122915364687559571
 Animator:
