@@ -85,9 +85,13 @@ public class PlayerController : MonoBehaviour
     private const float DEFAULT_GRAVITY_SCALE = 2f;
     private const float IN_WATER_GRAVITY_SCALE = 0.5f;
     private const float DISABLE_PLAYER_TIME = 2f;
+    private const float INVINCIBILITY_TIME = 1.5f;
     private float _groundRaycastDistance;
     private float _jumpForce;
     private float _stunBounceForce;
+    private bool _isInvincible;
+    private float _invincibilityTimer;
+    private bool _isSharedLivesMode;
 
     void Awake()
     {
@@ -147,28 +151,62 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        ReadPlayerInput();
+        UpdatePlayerMovement();
+    }
+
+    void FixedUpdate()
+    {
+        UpdatePlayerPhysicsChecks();
+    }
+
+    void ReadPlayerInput()
+    {
         if (InputProvider.Instance == null)
         {
             return;
         }
-
         PlayerCharacterInput input = assignedPlayerCharacter == PlayerCharacter.Red
             ? InputProvider.Instance.GetRedInput()
             : InputProvider.Instance.GetBlueInput();
-
         _inputH = input.horizontal;
         _isJumpPressed = input.jumpPressed;
         _isShootPressed = input.shootPressed;
+    }
 
-        if (!_playerDied)
+    void UpdatePlayerMovement()
+    {
+        if (_playerDied)
         {
-            if (playerControlsEnabled)
-            {
-                PlayerMoveInput(_inputH, _moveSpeed, _isJumpPressed, _isShootPressed);
-            }
+            return;
+        }
+        if (playerControlsEnabled)
+        {
+            PlayerMoveInput(_inputH, _moveSpeed, _isJumpPressed, _isShootPressed);
+        }
+    }
 
-            CheckIfPlayerHeadButt();
-            CheckIfPlayerOnGround();
+    void UpdatePlayerPhysicsChecks()
+    {
+        if (_playerDied)
+        {
+            return;
+        }
+        CheckIfPlayerHeadButt();
+        CheckIfPlayerOnGround();
+        TickInvincibility();
+    }
+
+    void TickInvincibility()
+    {
+        if (!_isInvincible)
+        {
+            return;
+        }
+        _invincibilityTimer -= Time.fixedDeltaTime;
+        if (_invincibilityTimer <= 0f)
+        {
+            _isInvincible = false;
         }
     }
 
@@ -383,7 +421,6 @@ public class PlayerController : MonoBehaviour
             if (other.gameObject.CompareTag("KillBox"))
             {
                 PlayerDied();
-                _playerDied = true;
             }
         }
 
@@ -404,12 +441,29 @@ public class PlayerController : MonoBehaviour
 
     void PlayerDied()
     {
+        _playerDied = true;
+        UpdatePlayerLives(-1);
+        ExecuteDeathSequence();
+    }
+
+    // called by GameManager when shared lives hit 0 — forces death without deducting a life
+    public void ForcePlayerDied()
+    {
+        if (_playerDied)
+        {
+            return;
+        }
+        _playerDied = true;
+        ExecuteDeathSequence();
+    }
+
+    void ExecuteDeathSequence()
+    {
         if (_cameraScript != null)
         {
             _cameraScript.RemoveCameraTarget(transform);
         }
         _audioScriptSelf.PlayAudioWaitToFinishClip(soundPlayerDied);
-        UpdatePlayerLives(-1);
         _animator.Play("PlayerHurt");
         StartCoroutine(EnumDisablePlayer(DISABLE_PLAYER_TIME));
         // 3x force for a dramatic death bounce
@@ -419,6 +473,50 @@ public class PlayerController : MonoBehaviour
     public bool PlayerNotSmall()
     {
         return playerState != PlayerState.PlayerSmall;
+    }
+
+    // called by enemies and projectiles — shrinks player one state, kills if already small
+    public void TakeHit()
+    {
+        if (_playerDied || _isInvincible)
+        {
+            return;
+        }
+        _isInvincible = true;
+        _invincibilityTimer = INVINCIBILITY_TIME;
+        switch (playerState)
+        {
+            case PlayerState.PlayerFire:
+                InitializePlayerState(PlayerState.PlayerNormal);
+                break;
+            case PlayerState.PlayerNormal:
+                InitializePlayerState(PlayerState.PlayerSmall);
+                break;
+            case PlayerState.PlayerLarge:
+                InitializePlayerState(PlayerState.PlayerNormal);
+                break;
+            case PlayerState.PlayerSmall:
+                PlayerDied();
+                break;
+        }
+    }
+
+    public void SetupSharedLives()
+    {
+        // single-player mode: lives managed by GameManager.sharedLives
+        _isSharedLivesMode = true;
+    }
+
+    public void SetupOwnLives(int lives, TextMeshPro hud)
+    {
+        // two-player mode: this character owns its lives and HUD independently
+        _isSharedLivesMode = false;
+        playerLives = lives;
+        hudLives = hud;
+        if (hudLives != null)
+        {
+            hudLives.text = playerLives.ToString();
+        }
     }
 
     public void UpdatePlayerCoins(int i)
@@ -432,6 +530,15 @@ public class PlayerController : MonoBehaviour
 
     public void UpdatePlayerLives(int i)
     {
+        if (_isSharedLivesMode)
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.UpdateSharedLives(i);
+            }
+            return;
+        }
+        // two-player mode: each character tracks its own lives and HUD
         playerLives += i;
         if (hudLives != null)
         {
@@ -475,7 +582,7 @@ public class PlayerController : MonoBehaviour
     {
         _playerRb.linearVelocity = Vector2.zero;
         _playerRb.simulated = false;
-        if (playerLives <= 0)
+        if (IsAllLivesGone())
         {
             gameObject.SetActive(false);
         }
@@ -483,6 +590,16 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(EnumPlacePlayerOnSavePoint(t));
         }
+    }
+
+    bool IsAllLivesGone()
+    {
+        if (_isSharedLivesMode)
+        {
+            return GameManager.Instance != null && GameManager.Instance.sharedLives <= 0;
+        }
+        // two-player mode: each character checks its own lives
+        return playerLives <= 0;
     }
 
     IEnumerator EnumPlacePlayerOnSavePoint(float t)

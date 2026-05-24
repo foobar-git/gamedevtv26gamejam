@@ -28,14 +28,10 @@ public class FireBallScript : MonoBehaviour
         bounceTimer = 0.25f;
     }
 
-    void Update()
-    {
-        CheckForObstacles();
-    }
-
     void FixedUpdate()
     {
         MoveFireBall(fireBallSpeed, fireBallTravelHeight);
+        CheckForObstacles();
     }
 
     // checks both directions because fireball direction can be either left or right

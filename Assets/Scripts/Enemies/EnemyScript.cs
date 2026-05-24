@@ -74,21 +74,32 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
-        UpdateEnemyBehavior();
+        TickEnemyTimers();
     }
 
     void FixedUpdate()
     {
-        MoveEnemy(isMovingLeft, moveSpeed);
+        UpdateEnemyPhysics();
     }
 
-    void UpdateEnemyBehavior()
+    // timers only — no physics here
+    void TickEnemyTimers()
     {
-        // enemy is flying as a corpse after bounce-kill — all patrol behavior must stop
         if (_isBounceKill)
         {
             return;
         }
+        TickShootTimer();
+    }
+
+    // all raycasts and movement in one place
+    void UpdateEnemyPhysics()
+    {
+        if (_isBounceKill)
+        {
+            return;
+        }
+        MoveEnemy(isMovingLeft, moveSpeed);
         // flying enemies have no ledge to fall off — skip ground detection entirely
         if (!isFlying)
         {
@@ -96,7 +107,6 @@ public class EnemyScript : MonoBehaviour
         }
         CheckForObstacle();
         CheckForPlayer();
-        TickShootTimer();
     }
 
     void TickShootTimer()
@@ -217,9 +227,13 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    void PlayerHurt()
+    void PlayerHurt(RaycastHit2D hit)
     {
-        Debug.Log("Player hurt!");
+        PlayerController pc = hit.collider.GetComponentInParent<PlayerController>();
+        if (pc != null)
+        {
+            pc.TakeHit();
+        }
     }
 
     public bool EnemyStunned
@@ -247,7 +261,7 @@ public class EnemyScript : MonoBehaviour
             }
             else
             {
-                PlayerHurt();
+                PlayerHurt(_frontRaycastHit);
             }
         }
 
@@ -259,7 +273,7 @@ public class EnemyScript : MonoBehaviour
             }
             else
             {
-                PlayerHurt();
+                PlayerHurt(_backRaycastHit);
             }
         }
     }

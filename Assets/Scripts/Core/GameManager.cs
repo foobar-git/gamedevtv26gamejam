@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 // Central singleton and access point for shared game state. Wires both players
 // into the camera on Start.
@@ -14,9 +15,13 @@ public class GameManager : MonoBehaviour
     public CameraScript cameraScript;
 
     [Header("State")]
-    // shared state — distinct from per-player lives and coins tracked inside PlayerController
     public int sharedLives = 3;
     public int sharedCoins = 0;
+
+    [Header("HUD")]
+    // single-player mode: one shared display for both characters
+    // two-player mode: replace with hudLivesRed and hudLivesBlue (see InitializeTwoPlayerMode)
+    public TextMeshPro hudLives;
 
     [Header("Start Point")]
     public Transform startPointTransform;
@@ -33,17 +38,47 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        InitializeSinglePlayerMode();
+        // TODO: [Phase X] - uncomment for two-player mode (and comment out line above)
+        // InitializeTwoPlayerMode();
+        InitializeCamera();
+    }
+
+    void InitializeSinglePlayerMode()
+    {
+        // both characters draw from one shared lives pool and one shared HUD display
+        if (playerControllerRed != null)
+        {
+            playerControllerRed.SetupSharedLives();
+        }
+        if (playerControllerBlue != null)
+        {
+            playerControllerBlue.SetupSharedLives();
+        }
+        UpdateSharedLivesDisplay();
+    }
+
+    void InitializeTwoPlayerMode()
+    {
+        // each character owns its lives and HUD reference independently
+        // 1. Replace hudLives above with: public TextMeshPro hudLivesRed; public TextMeshPro hudLivesBlue;
+        // 2. Assign each in the Inspector
+        // 3. Uncomment the calls below:
+        // if (playerControllerRed != null) { playerControllerRed.SetupOwnLives(3, hudLivesRed); }
+        // if (playerControllerBlue != null) { playerControllerBlue.SetupOwnLives(3, hudLivesBlue); }
+    }
+
+    void InitializeCamera()
+    {
         if (cameraScript == null)
         {
             return;
         }
-
         // defensive — guards against future changes to CameraScript's field initialization order
         if (cameraScript.cameraTargetList == null)
         {
             cameraScript.cameraTargetList = new System.Collections.Generic.List<Transform>();
         }
-
         if (playerControllerRed != null)
         {
             cameraScript.AddCameraTarget(playerControllerRed.transform);
@@ -51,6 +86,37 @@ public class GameManager : MonoBehaviour
         if (playerControllerBlue != null)
         {
             cameraScript.AddCameraTarget(playerControllerBlue.transform);
+        }
+    }
+
+    public void UpdateSharedLives(int i)
+    {
+        sharedLives += i;
+        UpdateSharedLivesDisplay();
+        if (sharedLives <= 0)
+        {
+            TriggerGameOver();
+        }
+    }
+
+    void TriggerGameOver()
+    {
+        // force both characters to die — whoever triggered this is already guarded by _playerDied
+        if (playerControllerRed != null)
+        {
+            playerControllerRed.ForcePlayerDied();
+        }
+        if (playerControllerBlue != null)
+        {
+            playerControllerBlue.ForcePlayerDied();
+        }
+    }
+
+    void UpdateSharedLivesDisplay()
+    {
+        if (hudLives != null)
+        {
+            hudLives.text = sharedLives.ToString();
         }
     }
 }

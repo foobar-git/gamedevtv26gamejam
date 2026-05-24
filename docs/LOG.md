@@ -36,3 +36,13 @@
 - Created `ProjectileScript`: gravity scale, size, lifetime, damage, optional hit effect — all Inspector-tunable.
 
 - New PlayerRed and PlayerBlue layers, players can now jump off each other
+## 2026-05-24
+- Enemy contact did no damage — `PlayerHurt()` was a stub. Added `TakeHit()` to `PlayerController`: state-based damage (Fire→Normal→Small→die), wired to enemy raycasts.
+- Multi-hit bug: physics checks in `Update()` fired every frame. Moved all raycasts/OverlapCircles to `FixedUpdate()` across `EnemyScript`, `PlayerController`, `FireBallScript`. Input-driven movement stays in `Update()`.
+- Added 1.5s invincibility frames after taking a hit.
+- Also fixed `MoveEnemy()` running unconditionally — moved inside bounce-kill guard.
+- Replaced per-player lives with shared pool: `GameManager` owns count and HUD. Added `InitializeSinglePlayerMode()` / `InitializeTwoPlayerMode()` (commented) for future two-player switch.
+- Game-over fix: lives hitting 0 now forces both characters to die simultaneously via `TriggerGameOver()`.
+- Introduced stack overflow: `ForcePlayerDied()` → `PlayerDied()` → `TriggerGameOver()` — infinite loop. Fixed: extracted `ExecuteDeathSequence()`, `_playerDied = true` set as first line of `PlayerDied()`.
+- `ProjectileScript` damage wiring deferred to next session.
+
