@@ -46,3 +46,15 @@
 - Introduced stack overflow: `ForcePlayerDied()` → `PlayerDied()` → `TriggerGameOver()` — infinite loop. Fixed: extracted `ExecuteDeathSequence()`, `_playerDied = true` set as first line of `PlayerDied()`.
 - `ProjectileScript` damage wiring deferred to next session.
 
+## 2026-05-24
+- Goal: when player B hangs on a platform wall and player A jumps on top, B must not slide down.
+- Removed: _hasPlayerOnTop detection, HoldPositionIfCarryingPlayer, IsInAir() — caused oscillation and brick bumping in earlier attempt.
+- Renamed _isOnGround → _isGrounded; replaced IsInAir() with IsHanging(), added SetHanging(), UpdateWallHang().
+- Tried gravity=0 + velocityY=0 in FixedUpdate — physics contact resolution overrides velocity, B still slides.
+- Tried FreezePositionY — does not prevent Box2D contact position correction.
+- Settled on bodyType=Static — truly immovable, contact forces cannot move it.
+- Problem: Static-Static contacts generate no events in Box2D — bodyType switch fires spurious OnCollisionExit2D → rapid oscillation.
+- Fixed: _bodyTypeJustChanged flag suppresses spurious exit; hang exits via _inputH==0 in UpdateWallHang.
+- Problem: player grazing wall with no input engaged Static → slow slide.
+- Fixed: IsHanging() returns false when _inputH==0 — Static only on active wall press.
+

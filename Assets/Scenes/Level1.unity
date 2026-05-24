@@ -3175,6 +3175,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
         type: 3}
+      propertyPath: soundTube
+      value: 
+      objectReference: {fileID: 8300000, guid: e7aebffb7d6e66b45b1df9abd6204fa5, type: 3}
+    - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
+        type: 3}
       propertyPath: exitTubeRight
       value: 1
       objectReference: {fileID: 0}
@@ -27562,12 +27567,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 706333110}
   m_Mesh: {fileID: 4300000, guid: 9e9e2ee63da6c9347bd8bd9ebf576d74, type: 3}
---- !u!4 &708637109 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3574489145192962115, guid: f824b0d51bfb8074d8f48db82acbc7a5,
-    type: 3}
-  m_PrefabInstance: {fileID: 1263751892}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &711049486
 GameObject:
   m_ObjectHideFlags: 0
@@ -48525,6 +48524,12 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!4 &1206696987 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3574489145192962115, guid: f824b0d51bfb8074d8f48db82acbc7a5,
+    type: 3}
+  m_PrefabInstance: {fileID: 3574489144670307110}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1208857033 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8447349140512705538, guid: 3a4aca2e54cc21d4d9835bbeb6e280ed,
@@ -50759,14 +50764,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
         type: 3}
+      propertyPath: soundTube
+      value: 
+      objectReference: {fileID: 8300000, guid: e7aebffb7d6e66b45b1df9abd6204fa5, type: 3}
+    - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
+        type: 3}
       propertyPath: _canEnterTube
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
         type: 3}
       propertyPath: otherTubeExitTransform
       value: 
-      objectReference: {fileID: 708637109}
+      objectReference: {fileID: 1206696987}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -87538,9 +87548,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
         type: 3}
+      propertyPath: soundTube
+      value: 
+      objectReference: {fileID: 8300000, guid: e7aebffb7d6e66b45b1df9abd6204fa5, type: 3}
+    - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
+        type: 3}
+      propertyPath: _canEnterTube
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5959441457127846752, guid: f824b0d51bfb8074d8f48db82acbc7a5,
+        type: 3}
       propertyPath: otherTubeExitTransform
       value: 
-      objectReference: {fileID: 708637109}
+      objectReference: {fileID: 1206696987}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

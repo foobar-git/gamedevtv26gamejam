@@ -162,7 +162,7 @@ public class TubeScript : MonoBehaviour
     // zone — not only on the first frame of contact
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.layer != LayerMask.NameToLayer("Player"))
+        if (!other.gameObject.CompareTag("Player"))
         {
             return;
         }

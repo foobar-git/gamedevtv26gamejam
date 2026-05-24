@@ -65,13 +65,14 @@ public class PlayerController : MonoBehaviour
     private bool _isShootPressed;
     private bool _playerDied;
     private bool _playerSaved;
-    private bool _isOnGround;
+    private bool _isGrounded;
     // _playerJumped and _jumpButtonReleased together prevent jump re-triggering while
     // the button is held down or while the player is already airborne
     private bool _playerJumped;
     private bool _isSwimming;
     private bool _jumpButtonReleased;
-    private bool _hasPlayerOnTop;
+    private bool _isHanging;
+    private bool _bodyTypeJustChanged;
 
     private float _moveSpeed;
     private float _defaultMoveSpeed;
@@ -191,7 +192,7 @@ public class PlayerController : MonoBehaviour
         CheckIfPlayerHeadButt();
         CheckIfPlayerOnGround();
         TickInvincibility();
-        HoldPositionIfCarryingPlayer();
+        UpdateWallHang();
     }
 
     void TickInvincibility()
@@ -207,14 +208,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void HoldPositionIfCarryingPlayer()
+    void UpdateWallHang()
     {
-        // clamp downward velocity so the bottom player acts as a stable base
-        if (!_hasPlayerOnTop || _playerRb.linearVelocity.y >= 0f)
+        // exit hang when player releases horizontal input
+        if (!_isHanging || _inputH != 0)
         {
             return;
         }
-        _playerRb.linearVelocity = new Vector2(_playerRb.linearVelocity.x, 0f);
+        SetHanging(false);
+    }
+
+    void SetHanging(bool hanging)
+    {
+        // guard prevents repeated bodyType switches — only fires on state change
+        if (_isHanging == hanging)
+        {
+            return;
+        }
+        _isHanging = hanging;
+        _bodyTypeJustChanged = true;
+        _playerRb.bodyType = hanging ? RigidbodyType2D.Static : RigidbodyType2D.Dynamic;
     }
 
     void PlayerMoveInput(float h, float ms, bool j, bool s)
@@ -237,9 +250,9 @@ public class PlayerController : MonoBehaviour
         if (!_isSwimming)
         {
             _animator.SetBool("playerSwimAnimParam", false);
-            _playerRb.gravityScale = _hasPlayerOnTop ? 0f : DEFAULT_GRAVITY_SCALE;
+            _playerRb.gravityScale = DEFAULT_GRAVITY_SCALE;
             _moveSpeed = _defaultMoveSpeed;
-            if (_isOnGround && !_playerJumped && _jumpButtonReleased)
+            if (_isGrounded && !_playerJumped && _jumpButtonReleased)
             {
                 if (j)
                 {
@@ -261,7 +274,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _playerRb.gravityScale = _hasPlayerOnTop ? 0f : IN_WATER_GRAVITY_SCALE;
+            _playerRb.gravityScale = IN_WATER_GRAVITY_SCALE;
             _moveSpeed = SWIM_SPEED;
             if (j)
             {
@@ -336,7 +349,7 @@ public class PlayerController : MonoBehaviour
 
     void PlayerOnGround(bool b)
     {
-        _isOnGround = b;
+        _isGrounded = b;
         _animator.SetBool("playerJumpAnimParam", !b);
     }
 
@@ -366,30 +379,16 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            if (!_isOnGround)
+            if (!_isGrounded)
             {
                 // damp horizontal speed when pressing into a wall mid-air
                 _moveSpeed = 0.15f;
+                SetHanging(IsHanging());
             }
             else
             {
                 _moveSpeed = _defaultMoveSpeed;
             }
-        }
-
-        if (other.gameObject.CompareTag("Player"))
-        {
-            // check if the other player is above us via contact normal
-            bool isOnTop = false;
-            foreach (ContactPoint2D contact in other.contacts)
-            {
-                if (contact.normal.y > 0.5f)
-                {
-                    isOnTop = true;
-                    break;
-                }
-            }
-            _hasPlayerOnTop = isOnTop;
         }
     }
 
@@ -398,11 +397,12 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             _moveSpeed = _defaultMoveSpeed;
-        }
-
-        if (other.gameObject.CompareTag("Player"))
-        {
-            _hasPlayerOnTop = false;
+            if (_bodyTypeJustChanged)
+            {
+                _bodyTypeJustChanged = false;
+                return;
+            }
+            SetHanging(false);
         }
     }
 
@@ -453,6 +453,7 @@ public class PlayerController : MonoBehaviour
             {
                 PlayerDied();
             }
+
         }
 
         if (other.gameObject.CompareTag("DestroyGameObjectBox"))
@@ -468,6 +469,7 @@ public class PlayerController : MonoBehaviour
         {
             _isSwimming = false;
         }
+
     }
 
     void PlayerDied()
@@ -504,6 +506,19 @@ public class PlayerController : MonoBehaviour
     public bool PlayerNotSmall()
     {
         return playerState != PlayerState.PlayerSmall;
+    }
+
+    bool IsHanging()
+    {
+        // only called from OnCollisionStay2D wall-mid-air branch — ray confirms nothing is below;
+        // input required so a player grazing the wall with no intent doesn't lock into Static
+        if (_inputH == 0)
+        {
+            return false;
+        }
+        Debug.DrawRay(groundCheckTransform.position, Vector2.down * _groundRaycastDistance, new Color(0.5f, 1f, 0.5f)); // TODO: [Testing] - remove before shipping
+        RaycastHit2D hit = Physics2D.Raycast(groundCheckTransform.position, Vector2.down, _groundRaycastDistance, groundLayer);
+        return !hit;
     }
 
     // called by enemies and projectiles — shrinks player one state, kills if already small
