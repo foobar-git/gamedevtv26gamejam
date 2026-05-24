@@ -35,7 +35,6 @@ public class EnemyScript : MonoBehaviour
     private Rigidbody2D _enemyRb;
     private Animator _animator;
     public AudioClip soundFireBallHit, soundPlayerStunEnemy;
-    private AudioScript _audioScript;
 
     public WithFireBallState withFireBallState;
 
@@ -46,7 +45,6 @@ public class EnemyScript : MonoBehaviour
         _enemyRb = GetComponent<Rigidbody2D>();
         _enemyCircleCollider2D = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
-        _audioScript = GetComponent<AudioScript>();
 
         if (isFlying)
         {
@@ -340,16 +338,6 @@ public class EnemyScript : MonoBehaviour
         _enemyRb.linearVelocity = new Vector2(pvx, f);
     }
 
-    public void EnemyPlayAudio(AudioClip sound)
-    {
-        _audioScript.PlayAudio(sound);
-    }
-
-    public void EnemyPlayAudioWaitToFinishClip(AudioClip sound)
-    {
-        _audioScript.PlayAudioWaitToFinishClip(sound);
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag(TagScript.TURN_ENEMY_TAG))
@@ -362,12 +350,12 @@ public class EnemyScript : MonoBehaviour
 
         if (other.gameObject.CompareTag(TagScript.PLAYER_TAG))
         {
-            _audioScript.PlayAudioWaitToFinishClip(soundPlayerStunEnemy);
+            AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemy);
         }
 
         if (other.gameObject.CompareTag(TagScript.FIRE_BALL_TAG))
         {
-            _audioScript.PlayAudio(soundFireBallHit);
+            AudioScript.Instance.PlayAudio(soundFireBallHit);
             if (_stunnedByFireBall)
             {
                 enemyStunned = true;

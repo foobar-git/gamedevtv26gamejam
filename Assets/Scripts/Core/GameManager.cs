@@ -112,6 +112,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // propagates a save point touch to whichever player didn't trigger it
+    public void UpdateOtherPlayerSavePoint(PlayerController triggeringPlayer, Transform savePoint)
+    {
+        if (playerControllerRed != triggeringPlayer && playerControllerRed != null)
+        {
+            playerControllerRed.SetSavePoint(savePoint);
+        }
+        if (playerControllerBlue != triggeringPlayer && playerControllerBlue != null)
+        {
+            playerControllerBlue.SetSavePoint(savePoint);
+        }
+    }
+
     void UpdateSharedLivesDisplay()
     {
         if (hudLives != null)

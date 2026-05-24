@@ -9,7 +9,6 @@ public class PickupScript : MonoBehaviour
     private Collider2D _thisCollider;
     private Rigidbody2D _pickupRb;
     private Animator _animator;
-    private AudioScript _audioScript;
     public AudioClip soundPickup, soundCoin, sound1up;
     public GameObject pickupParticles;
     private GameObject _newPickupParticlesAnim;
@@ -31,7 +30,6 @@ public class PickupScript : MonoBehaviour
     {
         _pickupRb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _audioScript = GetComponent<AudioScript>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _thisCollider = GetComponent<Collider2D>();
         // randomize initial direction so pickups don't always walk the same way
@@ -103,7 +101,7 @@ public class PickupScript : MonoBehaviour
     void DisableGameObject(bool b, AudioClip a)
     {
         // hide and disable immediately; Destroy is delayed so the audio clip plays to completion
-        _audioScript.PlayAudio(a);
+        AudioScript.Instance.PlayAudio(a);
         _spriteRenderer.enabled = !b;
         _thisCollider.enabled = !b;
     }
@@ -120,20 +118,22 @@ public class PickupScript : MonoBehaviour
     {
         if (other.gameObject.CompareTag(TagScript.PLAYER_TAG))
         {
+            AudioClip clipToPlay;
             if (this.gameObject.CompareTag(TagScript.PICKUP_COIN_TAG))
             {
                 SpawnPickupParticles();
-                DisableGameObject(true, soundCoin);
+                clipToPlay = soundCoin;
             }
             else if (this.gameObject.CompareTag(TagScript.PICKUP_1UP_TAG))
             {
-                DisableGameObject(true, sound1up);
+                clipToPlay = sound1up;
             }
             else
             {
-                DisableGameObject(true, soundPickup);
+                clipToPlay = soundPickup;
             }
-            Destroy(gameObject, _audioScript.audioSource.clip.length);
+            DisableGameObject(true, clipToPlay);
+            Destroy(gameObject, clipToPlay.length);
         }
     }
 

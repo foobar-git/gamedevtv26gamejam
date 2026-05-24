@@ -15,7 +15,6 @@ public class BrickScript : MonoBehaviour
     private Material[] _materials;
     private Collider2D _thisCollider;
     private Animator _animator;
-    private AudioScript _audioScript;
     public AudioClip soundBrickSolid, soundBrickDestroy, soundPickup, soundCoin;
     public Material materialBrickSolid;
     public GameObject gameObjectCoinBrickAnim, gameObjectFireFlower, gameObjectMushroom, gameObjectM1up, gameObjectBrickParticles;
@@ -37,7 +36,6 @@ public class BrickScript : MonoBehaviour
 
     void Awake()
     {
-        _audioScript = GetComponent<AudioScript>();
         _animator = GetComponent<Animator>();
         _meshRenderer = GetComponent<MeshRenderer>();
         _materials = _meshRenderer.materials;
@@ -188,14 +186,14 @@ public class BrickScript : MonoBehaviour
 
     void DisableGameObject(bool b, AudioClip a)
     {
-        _audioScript.PlayAudio(a);
+        AudioScript.Instance.PlayAudio(a);
         _meshRenderer.enabled = !b;
         _thisCollider.enabled = !b;
     }
 
     void AnimateBrickSolid()
     {
-        _audioScript.PlayAudioWaitToFinishClip(soundBrickSolid);
+        AudioScript.Instance.PlayAudioWaitToFinishClip(soundBrickSolid);
     }
 
     void AnimateBrickNormal()
@@ -209,14 +207,14 @@ public class BrickScript : MonoBehaviour
 
         if (_playerController.PlayerNotSmall())
         {
-            _audioScript.PlayAudioWaitToFinishClip(soundBrickDestroy);
+            AudioScript.Instance.PlayAudioWaitToFinishClip(soundBrickDestroy);
             SpawnBrickParticles();
             DisableGameObject(true, soundBrickDestroy);
-            Destroy(gameObject, _audioScript.audioSource.clip.length - 0.1f);
+            Destroy(gameObject, soundBrickDestroy.length - 0.1f);
         }
         else
         {
-            _audioScript.PlayAudio(soundBrickSolid);
+            AudioScript.Instance.PlayAudio(soundBrickSolid);
         }
     }
 
@@ -227,7 +225,7 @@ public class BrickScript : MonoBehaviour
         if (i <= 1)
         {
             _playerController.UpdatePlayerCoins(1);
-            _audioScript.PlayAudio(soundCoin);
+            AudioScript.Instance.PlayAudio(soundCoin);
             InitializeBrickState(BrickState.BrickSolid);
         }
         else
@@ -235,7 +233,7 @@ public class BrickScript : MonoBehaviour
             _animator.Play("BrickBounce");
             i--;
             _playerController.UpdatePlayerCoins(1);
-            _audioScript.PlayAudio(soundCoin);
+            AudioScript.Instance.PlayAudio(soundCoin);
             bounceCount = i;
         }
     }
@@ -243,14 +241,14 @@ public class BrickScript : MonoBehaviour
     void AnimateBrickFireFlower()
     {
         SpawnCoinOrFireFlower_BrickAnim(false, gameObjectFireFlower, 0f, 0.8f, 1f);
-        _audioScript.PlayAudio(soundPickup);
+        AudioScript.Instance.PlayAudio(soundPickup);
         InitializeBrickState(BrickState.BrickSolid);
     }
 
     void AnimateBrickMushroomOr1up(GameObject gameObjectPickup)
     {
         SpawnMushroomOr1up(gameObjectPickup, 0f, 0.75f, 0f);
-        _audioScript.PlayAudio(soundPickup);
+        AudioScript.Instance.PlayAudio(soundPickup);
         InitializeBrickState(BrickState.BrickSolid);
     }
 
@@ -322,7 +320,7 @@ public class BrickScript : MonoBehaviour
             Debug.Log("Player hits brick with head!");
             if (gameObject.name == "brick_solid")
             {
-                _audioScript.PlayAudio(soundBrickSolid);
+                AudioScript.Instance.PlayAudio(soundBrickSolid);
             }
             else
             {

@@ -15,7 +15,6 @@ public class TubeScript : MonoBehaviour
     private GameObject _gameObjectPlayerRed, _gameObjectPlayerBlue;
     public Transform otherTubeExitTransform;
     public AudioClip soundTube;
-    private AudioScript _audioScript;
     private Vector3 _tubeEntryPosition;
     private Vector3 _playerRedTubeToTubePosition, _playerBlueTubeToTubePosition;
     private Vector3 _playerRedOutOfTubePosition, _playerBlueOutOfTubePosition;
@@ -76,16 +75,6 @@ public class TubeScript : MonoBehaviour
         player.GetComponent<PlayerController>().playerControlsEnabled = true;
     }
 
-    // lazy fetch — GameManager may not be ready at Awake, so audio is retrieved on first use
-    AudioScript GetAudioScript()
-    {
-        if (_audioScript == null && GameManager.Instance != null)
-        {
-            _audioScript = GameManager.Instance.GetComponent<AudioScript>();
-        }
-        return _audioScript;
-    }
-
     void PreparePlayersForTubeTravel()
     {
         // both players warp to the same destination since they always travel together
@@ -96,10 +85,7 @@ public class TubeScript : MonoBehaviour
 
     void PreparePlayersForTubeExit()
     {
-        if (GetAudioScript() != null)
-        {
-            _audioScript.PlayAudio(soundTube);
-        }
+        AudioScript.Instance.PlayAudio(soundTube);
         _playerRedOutOfTubePosition = new Vector3(otherTubeExitTransform.position.x, otherTubeExitTransform.position.y + tubeEntryExit_y, otherTubeExitTransform.position.z);
         _playerBlueOutOfTubePosition = _playerRedOutOfTubePosition;
     }
@@ -201,10 +187,7 @@ public class TubeScript : MonoBehaviour
                 // z + 1 places the entry target slightly in front so the player slides visually into the tube
                 _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
                 _isPlayerRedEnteringTube = true;
-                if (GetAudioScript() != null)
-                {
-                    _audioScript.PlayAudio(soundTube);
-                }
+                AudioScript.Instance.PlayAudio(soundTube);
             }
         }
         else if (pc.assignedPlayerCharacter == PlayerController.PlayerCharacter.Blue && !_isPlayerBlueEnteringTube && !_isPlayerBlueArrivedInTube)
@@ -215,10 +198,7 @@ public class TubeScript : MonoBehaviour
                 DisablePlayer(_gameObjectPlayerBlue);
                 _tubeEntryPosition = new Vector3(transform.position.x, transform.position.y - tubeEntryExit_y, transform.position.z + 1f);
                 _isPlayerBlueEnteringTube = true;
-                if (GetAudioScript() != null)
-                {
-                    _audioScript.PlayAudio(soundTube);
-                }
+                AudioScript.Instance.PlayAudio(soundTube);
             }
         }
     }

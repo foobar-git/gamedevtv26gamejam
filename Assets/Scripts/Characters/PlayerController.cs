@@ -55,9 +55,6 @@ public class PlayerController : MonoBehaviour
     private Collider2D _playerHeadCollider;
 
     private GameObject _newStompParticlesAnim;
-    // _audioScriptSelf: sounds on this player only; _audioScriptGameMaster: global world sounds
-    private AudioScript _audioScriptSelf;
-    private AudioScript _audioScriptGameMaster;
     private EnemyScript _enemyScript;
     private Rigidbody2D _playerRb;
     private Animator _animator;
@@ -74,6 +71,7 @@ public class PlayerController : MonoBehaviour
     private bool _playerJumped;
     private bool _isSwimming;
     private bool _jumpButtonReleased;
+    private bool _hasPlayerOnTop;
 
     private float _moveSpeed;
     private float _defaultMoveSpeed;
@@ -97,10 +95,8 @@ public class PlayerController : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _audioScriptSelf = GetComponent<AudioScript>();
         if (GameManager.Instance != null)
         {
-            _audioScriptGameMaster = GameManager.Instance.GetComponent<AudioScript>();
             _cameraScript = GameManager.Instance.cameraScript;
         }
 
@@ -195,6 +191,7 @@ public class PlayerController : MonoBehaviour
         CheckIfPlayerHeadButt();
         CheckIfPlayerOnGround();
         TickInvincibility();
+        HoldPositionIfCarryingPlayer();
     }
 
     void TickInvincibility()
@@ -208,6 +205,16 @@ public class PlayerController : MonoBehaviour
         {
             _isInvincible = false;
         }
+    }
+
+    void HoldPositionIfCarryingPlayer()
+    {
+        // clamp downward velocity so the bottom player acts as a stable base
+        if (!_hasPlayerOnTop || _playerRb.linearVelocity.y >= 0f)
+        {
+            return;
+        }
+        _playerRb.linearVelocity = new Vector2(_playerRb.linearVelocity.x, 0f);
     }
 
     void PlayerMoveInput(float h, float ms, bool j, bool s)
@@ -230,7 +237,7 @@ public class PlayerController : MonoBehaviour
         if (!_isSwimming)
         {
             _animator.SetBool("playerSwimAnimParam", false);
-            _playerRb.gravityScale = DEFAULT_GRAVITY_SCALE;
+            _playerRb.gravityScale = _hasPlayerOnTop ? 0f : DEFAULT_GRAVITY_SCALE;
             _moveSpeed = _defaultMoveSpeed;
             if (_isOnGround && !_playerJumped && _jumpButtonReleased)
             {
@@ -239,7 +246,7 @@ public class PlayerController : MonoBehaviour
                     _playerJumped = true;
                     _jumpButtonReleased = false;
                     ChangePlayerDirection(_playerRb.linearVelocity.x, _jumpForce, "playerJumpAnimParam", true);
-                    _audioScriptSelf.PlayAudio(soundPlayerJump);
+                    AudioScript.Instance.PlayAudio(soundPlayerJump);
                 }
             }
             else
@@ -254,12 +261,12 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _playerRb.gravityScale = IN_WATER_GRAVITY_SCALE;
+            _playerRb.gravityScale = _hasPlayerOnTop ? 0f : IN_WATER_GRAVITY_SCALE;
             _moveSpeed = SWIM_SPEED;
             if (j)
             {
                 ChangePlayerDirection(_playerRb.linearVelocity.x, SWIM_FORCE, "playerSwimAnimParam", true);
-                _audioScriptSelf.PlayAudio(soundPlayerSwim);
+                AudioScript.Instance.PlayAudio(soundPlayerSwim);
             }
         }
 
@@ -267,7 +274,7 @@ public class PlayerController : MonoBehaviour
         {
             GameObject newBullet = Instantiate(fireBall, fireBallSocketTransform.position, Quaternion.identity);
             newBullet.GetComponent<FireBallScript>().PlayerDirectionToFireBallSpeed(true, playerDirection);
-            _audioScriptSelf.PlayAudio(soundPlayerShootFireBall);
+            AudioScript.Instance.PlayAudio(soundPlayerShootFireBall);
         }
     }
 
@@ -311,13 +318,13 @@ public class PlayerController : MonoBehaviour
                 BouncePlayerUp(_playerRb.linearVelocity.x, _stunBounceForce);
                 _enemyScript.EnemyStunned = true;
                 SpawnStompParticles();
-                if (_playerOnEnemyCollider.name == "Snail" && _audioScriptGameMaster != null)
+                if (_playerOnEnemyCollider.name == "Snail")
                 {
-                    _audioScriptGameMaster.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBells);
+                    AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBells);
                 }
-                else if (_playerOnEnemyCollider.name == "Beetle" && _audioScriptGameMaster != null)
+                else if (_playerOnEnemyCollider.name == "Beetle")
                 {
-                    _audioScriptGameMaster.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBoing);
+                    AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBoing);
                 }
             }
         }
@@ -369,6 +376,21 @@ public class PlayerController : MonoBehaviour
                 _moveSpeed = _defaultMoveSpeed;
             }
         }
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            // check if the other player is above us via contact normal
+            bool isOnTop = false;
+            foreach (ContactPoint2D contact in other.contacts)
+            {
+                if (contact.normal.y > 0.5f)
+                {
+                    isOnTop = true;
+                    break;
+                }
+            }
+            _hasPlayerOnTop = isOnTop;
+        }
     }
 
     void OnCollisionExit2D(Collision2D other)
@@ -376,6 +398,11 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             _moveSpeed = _defaultMoveSpeed;
+        }
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _hasPlayerOnTop = false;
         }
     }
 
@@ -385,9 +412,13 @@ public class PlayerController : MonoBehaviour
         {
             if (!_playerSaved && other.gameObject.CompareTag("SavePoint"))
             {
-                _audioScriptSelf.PlayAudioWaitToFinishClip(soundSavePoint);
+                AudioScript.Instance.PlayAudioWaitToFinishClip(soundSavePoint, AudioChannel.Player);
                 savePointTransform = other.transform;
                 _playerSaved = true;
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.UpdateOtherPlayerSavePoint(this, other.transform);
+                }
             }
 
             if (other.gameObject.CompareTag("PickupFireFlower"))
@@ -463,7 +494,7 @@ public class PlayerController : MonoBehaviour
         {
             _cameraScript.RemoveCameraTarget(transform);
         }
-        _audioScriptSelf.PlayAudioWaitToFinishClip(soundPlayerDied);
+        AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerDied, AudioChannel.Player);
         _animator.Play("PlayerHurt");
         StartCoroutine(EnumDisablePlayer(DISABLE_PLAYER_TIME));
         // 3x force for a dramatic death bounce
@@ -499,6 +530,13 @@ public class PlayerController : MonoBehaviour
                 PlayerDied();
                 break;
         }
+    }
+
+    // called by GameManager when the other player touches a save point — syncs without playing the sound
+    public void SetSavePoint(Transform savePoint)
+    {
+        savePointTransform = savePoint;
+        _playerSaved = true;
     }
 
     public void SetupSharedLives()
