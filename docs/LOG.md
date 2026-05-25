@@ -58,3 +58,9 @@
 - Problem: player grazing wall with no input engaged Static → slow slide.
 - Fixed: IsHanging() returns false when _inputH==0 — Static only on active wall press.
 
+## 2026-05-25
+- Added soundPlayerHit to PlayerController — plays on shrink, not on death.
+- savePointTransform was public unnecessarily — made private, renamed to _savePointTransform.
+- Added LockPlayerZPosition() in LateUpdate — prevents Z drift from transform.position assignments.
+- Camera boundary walls: BoxCollider2D children of the camera, local X driven by CameraScript each frame to track zoom.
+

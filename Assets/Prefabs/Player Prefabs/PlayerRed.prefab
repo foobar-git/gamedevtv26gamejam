@@ -376,6 +376,7 @@ MonoBehaviour:
     type: 3}
   hudLives: {fileID: 0}
   hudCoins: {fileID: 0}
+  soundPlayerHit: {fileID: 8300000, guid: 997ed36fe4e3a7d4f83494fd8afcb9f5, type: 3}
   soundPlayerJump: {fileID: 8300000, guid: 818d3df6c359e7141ab2d12f7cac751c, type: 3}
   soundPlayerSwim: {fileID: 8300000, guid: 0fe90e8e29eb58a49af584ac24ed0d62, type: 3}
   soundPlayerShootFireBall: {fileID: 8300000, guid: d974cd07eb503e844b808e2048efa4f0,

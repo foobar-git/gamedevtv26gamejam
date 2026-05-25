@@ -16,13 +16,14 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckTransform;
     public Transform headCheckTransform;
     public Transform fireBallSocketTransform;
-    public Transform savePointTransform;
+    private Transform _savePointTransform;
     public GameObject fireBall;
     public GameObject stompParticles;
     public TextMeshPro hudLives;
     public TextMeshPro hudCoins;
 
     [Header("Audio")]
+    public AudioClip soundPlayerHit;
     public AudioClip soundPlayerJump;
     public AudioClip soundPlayerSwim;
     public AudioClip soundPlayerShootFireBall;
@@ -155,6 +156,20 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         UpdatePlayerPhysicsChecks();
+    }
+
+    void LateUpdate()
+    {
+        LockPlayerZPosition();
+    }
+
+    void LockPlayerZPosition()
+    {
+        // Z must always be 0 — transform.position assignments can inherit non-zero Z from source transforms
+        if (transform.position.z != 0f)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+        }
     }
 
     void ReadPlayerInput()
@@ -413,7 +428,7 @@ public class PlayerController : MonoBehaviour
             if (!_playerSaved && other.gameObject.CompareTag("SavePoint"))
             {
                 AudioScript.Instance.PlayAudioWaitToFinishClip(soundSavePoint, AudioChannel.Player);
-                savePointTransform = other.transform;
+                _savePointTransform = other.transform;
                 _playerSaved = true;
                 if (GameManager.Instance != null)
                 {
@@ -530,6 +545,10 @@ public class PlayerController : MonoBehaviour
         }
         _isInvincible = true;
         _invincibilityTimer = INVINCIBILITY_TIME;
+        if (playerState != PlayerState.PlayerSmall)
+        {
+            AudioScript.Instance.PlayAudio(soundPlayerHit);
+        }
         switch (playerState)
         {
             case PlayerState.PlayerFire:
@@ -550,7 +569,7 @@ public class PlayerController : MonoBehaviour
     // called by GameManager when the other player touches a save point — syncs without playing the sound
     public void SetSavePoint(Transform savePoint)
     {
-        savePointTransform = savePoint;
+        _savePointTransform = savePoint;
         _playerSaved = true;
     }
 
@@ -664,9 +683,9 @@ public class PlayerController : MonoBehaviour
     void PlacePlayerOnSavePoint(float t)
     {
         // respawn at last save point; fall back to level start if none reached yet
-        if (savePointTransform != null)
+        if (_savePointTransform != null)
         {
-            transform.position = savePointTransform.position;
+            transform.position = _savePointTransform.position;
         }
         else if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
         {

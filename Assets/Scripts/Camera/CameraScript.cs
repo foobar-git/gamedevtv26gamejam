@@ -15,6 +15,11 @@ public class CameraScript : MonoBehaviour
     private bool _hasSnapped;
 
     public List<Transform> cameraTargetList = new List<Transform>();
+    // invisible collider walls that are children of the camera — they move with it automatically.
+    // their local X is updated each frame to sit exactly at the camera edges, accounting for zoom.
+    // layer matrix ensures only players collide with them — enemies and projectiles pass through.
+    [SerializeField] private Transform _boundaryLeftTransform;
+    [SerializeField] private Transform _boundaryRightTransform;
     private Camera _mainCamera;
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +41,7 @@ public class CameraScript : MonoBehaviour
         SnapCameraOnFirstFrame();
         MoveCamera();
         ZoomCamera();
+        UpdateBoundaryPositions();
     }
 
     void SnapCameraOnFirstFrame()
@@ -84,6 +90,22 @@ public class CameraScript : MonoBehaviour
             _zoomBounds.Encapsulate(cameraTargetList[i].position);
         }
         return _zoomBounds.size.x;
+    }
+
+    void UpdateBoundaryPositions()
+    {
+        // half the camera width in world units — walls sit exactly at the visible edges.
+        // recalculated every frame because orthographicSize changes as players spread apart.
+        float halfWidth = _mainCamera.orthographicSize * _mainCamera.aspect;
+        // only X is driven by code — Y and Z stay as placed in the editor
+        if (_boundaryLeftTransform != null)
+        {
+            _boundaryLeftTransform.localPosition = new Vector3(-halfWidth, _boundaryLeftTransform.localPosition.y, _boundaryLeftTransform.localPosition.z);
+        }
+        if (_boundaryRightTransform != null)
+        {
+            _boundaryRightTransform.localPosition = new Vector3(halfWidth, _boundaryRightTransform.localPosition.y, _boundaryRightTransform.localPosition.z);
+        }
     }
 
     void MoveCamera()

@@ -11,8 +11,6 @@ public class ProjectileScript : MonoBehaviour
     [SerializeField] private float sizeScale = 1f;
     // auto-destroy after this many seconds — safety net for projectiles that miss everything
     [SerializeField] private float lifetime = 5f;
-    // TODO: [Phase X] - replace with proper damage system (state reduction: fire → normal → small → dead)
-    [SerializeField] private int damage = 1;
     // optional — spawned at the projectile's position when it is destroyed on impact
     [SerializeField] private GameObject gameObjectHitEffectPrefab;
 
@@ -44,7 +42,7 @@ public class ProjectileScript : MonoBehaviour
             PlayerController pc = other.GetComponentInParent<PlayerController>();
             if (pc != null)
             {
-                pc.UpdatePlayerLives(-damage);
+                pc.TakeHit();
             }
             DestroyProjectile();
         }
