@@ -64,3 +64,20 @@
 - Added LockPlayerZPosition() in LateUpdate — prevents Z drift from transform.position assignments.
 - Camera boundary walls: BoxCollider2D children of the camera, local X driven by CameraScript each frame to track zoom.
 
+## 2026-05-25
+- Tried EnemyAnimatorScript (enemy-specific) — scrapped, replaced with neutral SpriteAnimatorScript.
+- Created SpriteAnimatorScript: sprite arrays + fps per state in Inspector, activeStateIndex drives state switching, any GameObject can use it.
+- Added name field to SpriteAnimationState so Inspector elements label as "Animation 0", "Animation 1" etc.
+- EnemyScript: added WithStompState enum (StunnedByStomp, KilledByStomp) — stomp behavior selectable per enemy in Inspector.
+- EnemyScript: added ContactType enum (Armored, Standard) — Armored uses side raycasts, Standard uses OnCollisionEnter2D (any contact except stomp from above).
+- EnemyScript: BounceKillEnemy now switches to DeadEnemy layer — falls through world geometry, still caught by destroy zones. Removed isTrigger approach.
+- EnemyScript: animation not switching on kill fixed — set activeStateIndex directly in BounceKillEnemy (MoveEnemy never runs after _isBounceKill).
+- EnemyScript: added PlayStompSound() — all enemies play soundPlayerStomp, Armored additionally plays soundPlayerArmoredStomp. Removed hardcoded Snail/Beetle name checks from PlayerController.
+- EnemyScript: null check on Animator — enemies without Unity Animator no longer throw.
+- EnemyScript: oscillation amplitude cap raised from 5 to 20.
+- EnemyScript: isFlying disabled on BounceKillEnemy so gravity pulls killed flying enemies off screen.
+- PlayerController: added isGodMode (testing helper — player invincible).
+- PlayerController: added FreezeAtFinish() — sets bodyType Static, disables controls.
+- Created InteractableScript: trigger-based, shoot button activates, isToggle selectable in Inspector.
+- Created FinishFlagScript: both players must reach it, first freezes, second restarts the scene.
+

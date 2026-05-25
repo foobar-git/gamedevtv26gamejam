@@ -235,6 +235,8 @@ MonoBehaviour:
   enemyHit: 0
   isEnemyFalling: 0
   isFlying: 0
+  oscillationAmplitude: 0
+  oscillationFrequency: 2
   shootDirection: 0
   shootInterval: 0
   shootSpeed: 0
@@ -246,7 +248,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   groundCheckTransform: {fileID: 3544809327248979707}
-  soundFireBallHit: {fileID: 0}
-  soundPlayerStunEnemy: {fileID: 8300000, guid: dbffadafd6d956e4a8cfe27f58149619,
+  soundFireBallHit: {fileID: 8300000, guid: dbffadafd6d956e4a8cfe27f58149619, type: 3}
+  soundPlayerStomp: {fileID: 8300000, guid: dbffadafd6d956e4a8cfe27f58149619, type: 3}
+  soundPlayerArmoredStomp: {fileID: 8300000, guid: 6e3d089a4440dc04bac14d1bf798f518,
     type: 3}
   withFireBallState: 1
+  withStompState: 0
+  contactType: 0
+  spriteAnimatorScript: {fileID: 0}

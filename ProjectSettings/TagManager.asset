@@ -29,7 +29,7 @@ TagManager:
   - Water
   - UI
   - 
-  - 
+  - DeadEnemy
   - Ground
   - Enemy
   - PlayerRed
@@ -39,7 +39,7 @@ TagManager:
   - PlayerBlue
   - Hud
   - CameraBoundary
-  - 
+  - EnemyWater
   - 
   - 
   - 

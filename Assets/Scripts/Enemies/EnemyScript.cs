@@ -8,6 +8,8 @@ public class EnemyScript : MonoBehaviour
 {
     // configured per-enemy type in the Inspector — determines fireball reaction (none, stun, or kill)
     public enum WithFireBallState { NeutralToFireBall, StunnedByFireBall, KilledByFireBall }
+    public enum WithStompState { StunnedByStomp, KilledByStomp }
+    public enum ContactType { Armored, Standard }
     public enum ShootDirection { Left, Right, Up, Down }
 
     [SerializeField] private float moveSpeed, playerPushForce, enemyBounceForce, raycastDistanceGround, raycastDistanceFront, raycastDistanceBack;
@@ -15,6 +17,8 @@ public class EnemyScript : MonoBehaviour
 
     [Header("Flying")]
     [SerializeField] private bool isFlying;
+    [Range(0f, 20f)] [SerializeField] private float oscillationAmplitude;
+    [SerializeField] private float oscillationFrequency = 2f;
 
     [Header("Shooting")]
     [SerializeField] private ShootDirection shootDirection;
@@ -34,9 +38,17 @@ public class EnemyScript : MonoBehaviour
     private CircleCollider2D _enemyCircleCollider2D;
     private Rigidbody2D _enemyRb;
     private Animator _animator;
-    public AudioClip soundFireBallHit, soundPlayerStunEnemy;
+    public AudioClip soundFireBallHit, soundPlayerStomp, soundPlayerArmoredStomp;
 
     public WithFireBallState withFireBallState;
+    // default: stomp stuns the enemy — set to KilledByStomp for enemies that die in one hit
+    public WithStompState withStompState;
+    // Armored: side raycasts detect player contact. Standard: any physical collision damages player (except stomp from above)
+    public ContactType contactType;
+
+    [Header("Animation")]
+    [Tooltip("Leave empty if one animation is enough. Assign to enable state switching (idle, move, stunned, etc.).")]
+    [SerializeField] private SpriteAnimatorScript spriteAnimatorScript;
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -196,21 +208,31 @@ public class EnemyScript : MonoBehaviour
     {
         if (!enemyStunned)
         {
-            // flying enemies lock Y to 0 — prevents physics nudges from drifting their height
-            float vy = isFlying ? 0f : _enemyRb.linearVelocity.y;
-            if (ml)
+            // flying enemies oscillate vertically via sine wave — amplitude and frequency set in Inspector
+            float verticalVelocity;
+            if (isFlying)
             {
-                _enemyRb.linearVelocity = new Vector2(-ms, vy);
+                verticalVelocity = Mathf.Sin(Time.time * oscillationFrequency) * oscillationAmplitude;
             }
             else
             {
-                _enemyRb.linearVelocity = new Vector2(ms, vy);
+                verticalVelocity = _enemyRb.linearVelocity.y;
             }
-            _animator.Play("EnemyMove");
+            if (ml)
+            {
+                _enemyRb.linearVelocity = new Vector2(-ms, verticalVelocity);
+            }
+            else
+            {
+                _enemyRb.linearVelocity = new Vector2(ms, verticalVelocity);
+            }
+            if (_animator != null) { _animator.Play("EnemyMove"); }
+            if (spriteAnimatorScript != null) { spriteAnimatorScript.activeStateIndex = 0; }
         }
         else
         {
-            _animator.Play("EnemyStunned");
+            if (_animator != null) { _animator.Play("EnemyStunned"); }
+            if (spriteAnimatorScript != null) { spriteAnimatorScript.activeStateIndex = 1; }
             CorrectColliderOffset(0f, _enemyCircleCollider2D.offset.y);
         }
     }
@@ -234,6 +256,15 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    public void PlayStompSound()
+    {
+        AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStomp);
+        if (contactType == ContactType.Armored)
+        {
+            AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerArmoredStomp);
+        }
+    }
+
     public bool EnemyStunned
     {
         get
@@ -248,6 +279,10 @@ public class EnemyScript : MonoBehaviour
 
     void CheckForPlayer()
     {
+        if (contactType == ContactType.Standard)
+        {
+            return;
+        }
         _frontRaycastHit = Physics2D.Raycast(transform.position, Vector2.left, raycastDistanceFront, playerLayer);
         _backRaycastHit = Physics2D.Raycast(transform.position, Vector2.right, raycastDistanceBack, playerLayer);
 
@@ -325,9 +360,12 @@ public class EnemyScript : MonoBehaviour
     public void BounceKillEnemy()
     {
         _isBounceKill = true;
+        isFlying = false; // restore gravity so the enemy falls off screen after the bounce
+        _enemyRb.gravityScale = 1f;
+        gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
+        if (spriteAnimatorScript != null) { spriteAnimatorScript.activeStateIndex = 1; }
         BounceEnemyUp(_enemyRb.linearVelocity.x, enemyBounceForce);
         // switch to trigger so the corpse doesn't physically interact during its upward arc
-        _enemyCircleCollider2D.isTrigger = true;
         // z = -5 renders the corpse in front of other sprites while it flies up
         transform.position = new Vector3(transform.position.x, transform.position.y, -5f);
         enemyHit = true;
@@ -350,7 +388,7 @@ public class EnemyScript : MonoBehaviour
 
         if (other.gameObject.CompareTag(TagScript.PLAYER_TAG))
         {
-            AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemy);
+            AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStomp);
         }
 
         if (other.gameObject.CompareTag(TagScript.FIRE_BALL_TAG))
@@ -375,6 +413,19 @@ public class EnemyScript : MonoBehaviour
         if (other.gameObject.CompareTag(TagScript.ENEMY_TAG))
         {
             ChangeEnemyDirection();
+        }
+        if (contactType == ContactType.Standard && other.gameObject.CompareTag(TagScript.PLAYER_TAG))
+        {
+            // contact point above enemy center = player landed on top (stomp) — PlayerController handles it
+            if (other.GetContact(0).point.y > transform.position.y)
+            {
+                return;
+            }
+            PlayerController pc = other.gameObject.GetComponentInParent<PlayerController>();
+            if (pc != null)
+            {
+                pc.TakeHit();
+            }
         }
     }
 

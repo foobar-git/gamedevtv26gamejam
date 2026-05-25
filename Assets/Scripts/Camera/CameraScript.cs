@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,11 +9,21 @@ public class CameraScript : MonoBehaviour
 {
     public float cameraSmoothTime, cameraZoom, maxZoom, minZoom, zoomLimiter;
 
+    [Header("Auto Move")]
+    [SerializeField] private bool isAutoMove;
+    [SerializeField] private float autoMoveSpeed;
+
     public Vector3 offset;
     private Vector3 _cameraCenterPoint, _velocityVec;
     private Bounds _moveBounds, _zoomBounds;
     // prevents SmoothDamp from sliding in from the editor position on frame one
     private bool _hasSnapped;
+    // stores isAutoMove state before a temporary disable — restored when players respawn
+    private bool _savedAutoMoveState;
+    // guards RestoreAutoMove so it's a no-op unless DisableAutoMoveTemporarily was actually called
+    private bool _isAutoMoveTemporarilyDisabled;
+    // tracks how many players are mid-death/respawn — kill zone stays off until this reaches 0
+    private int _pendingRespawnCount;
 
     public List<Transform> cameraTargetList = new List<Transform>();
     // invisible collider walls that are children of the camera — they move with it automatically.
@@ -20,6 +31,7 @@ public class CameraScript : MonoBehaviour
     // layer matrix ensures only players collide with them — enemies and projectiles pass through.
     [SerializeField] private Transform _boundaryLeftTransform;
     [SerializeField] private Transform _boundaryRightTransform;
+    [SerializeField] private GameObject gameObjectLeftKillZone;
     private Camera _mainCamera;
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +127,18 @@ public class CameraScript : MonoBehaviour
             return;
         }
         _cameraCenterPoint = GetCameraCenterPoint();
-        transform.position = Vector3.SmoothDamp(transform.position, _cameraCenterPoint + offset, ref _velocityVec, cameraSmoothTime);
+        if (isAutoMove)
+        {
+            // X moves right at constant speed — players are pushed along by the boundary walls
+            float targetX = transform.position.x + autoMoveSpeed * Time.deltaTime;
+            // Y still follows players so jumps and falls stay on screen
+            float targetY = Mathf.SmoothDamp(transform.position.y, _cameraCenterPoint.y + offset.y, ref _velocityVec.y, cameraSmoothTime);
+            transform.position = new Vector3(targetX, targetY, transform.position.z);
+        }
+        else
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, _cameraCenterPoint + offset, ref _velocityVec, cameraSmoothTime);
+        }
     }
 
     void ZoomCamera()
@@ -129,6 +152,77 @@ public class CameraScript : MonoBehaviour
         cameraZoom = Mathf.Lerp(maxZoom, minZoom, GetMaxPlayerDistance() / zoomLimiter);
         // Time.deltaTime smoothing is intentional — gives a soft, frame-rate-dependent ease
         _mainCamera.orthographicSize = Mathf.Lerp(_mainCamera.orthographicSize, cameraZoom, Time.deltaTime);
+    }
+
+    void OnEnable()
+    {
+        PlayerController.OnAnyPlayerDied += HandlePlayerDied;
+        PlayerController.OnAnyPlayerRespawned += HandlePlayerRespawned;
+    }
+
+    void OnDisable()
+    {
+        PlayerController.OnAnyPlayerDied -= HandlePlayerDied;
+        PlayerController.OnAnyPlayerRespawned -= HandlePlayerRespawned;
+    }
+
+    void HandlePlayerDied()
+    {
+        _pendingRespawnCount++;
+        if (gameObjectLeftKillZone != null)
+        {
+            gameObjectLeftKillZone.SetActive(false);
+        }
+    }
+
+    void HandlePlayerRespawned()
+    {
+        _pendingRespawnCount--;
+        if (_pendingRespawnCount <= 0)
+        {
+            _pendingRespawnCount = 0;
+            RestoreAutoMove();
+            StartCoroutine(EnumReEnableKillZone());
+        }
+    }
+
+    IEnumerator EnumReEnableKillZone()
+    {
+        // wait 5 physics steps so overlap resolution completes before kill zone is active again
+        for (int i = 0; i < 5; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        if (gameObjectLeftKillZone != null)
+        {
+            gameObjectLeftKillZone.SetActive(true);
+        }
+    }
+
+    // saves isAutoMove state and disables it — call when both players die
+    public void DisableAutoMoveTemporarily()
+    {
+        _savedAutoMoveState = isAutoMove;
+        isAutoMove = false;
+        _isAutoMoveTemporarilyDisabled = true;
+    }
+
+    // restores isAutoMove to whatever it was before DisableAutoMoveTemporarily — no-op if never disabled
+    public void RestoreAutoMove()
+    {
+        if (!_isAutoMoveTemporarilyDisabled)
+        {
+            return;
+        }
+        isAutoMove = _savedAutoMoveState;
+        _isAutoMoveTemporarilyDisabled = false;
+    }
+
+    // instantly snaps camera to save point position and clears SmoothDamp velocity
+    public void SnapToPosition(Transform targetTransform)
+    {
+        transform.position = new Vector3(targetTransform.position.x, targetTransform.position.y, transform.position.z);
+        _velocityVec = Vector3.zero;
     }
 
 } // end of class

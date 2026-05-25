@@ -369,7 +369,6 @@ MonoBehaviour:
   groundCheckTransform: {fileID: 3301052470114035122}
   headCheckTransform: {fileID: 3301052469178515393}
   fireBallSocketTransform: {fileID: 3301052468845896230}
-  savePointTransform: {fileID: 0}
   fireBall: {fileID: 1111973184227194681, guid: 97f6ed16c2f245d40a2247ebda9f0ac8,
     type: 3}
   stompParticles: {fileID: 2023497344407529666, guid: 835026a7380e648448be9127c7f1fb9f,
@@ -401,7 +400,7 @@ MonoBehaviour:
     m_Bits: 256
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 131584
   playerLayer:
     serializedVersion: 2
     m_Bits: 1024

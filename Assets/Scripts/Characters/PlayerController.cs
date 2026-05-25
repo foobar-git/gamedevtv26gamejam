@@ -29,10 +29,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip soundPlayerShootFireBall;
     public AudioClip soundPlayerDied;
     public AudioClip soundSavePoint;
-    public AudioClip soundPlayerStunEnemyBells;
-    public AudioClip soundPlayerStunEnemyBoing;
 
     [Header("State")]
+    [Tooltip("Editor/testing only — player cannot take damage.")]
+    public bool isGodMode = false; // TODO: [Testing] - remove before shipping
     public bool playerControlsEnabled = true;
     public bool playerCanShoot = false;
     public int playerDirection = 1;
@@ -342,18 +342,18 @@ public class PlayerController : MonoBehaviour
             _enemyScript = _playerOnEnemyCollider.GetComponent<EnemyScript>();
             if (!_enemyScript.EnemyStunned)
             {
-                // stun the enemy on stomp — bounce the player up so the stomp doesn't repeat next frame
                 BouncePlayerUp(_playerRb.linearVelocity.x, _stunBounceForce);
-                _enemyScript.EnemyStunned = true;
                 SpawnStompParticles();
-                if (_playerOnEnemyCollider.name == "Snail")
+                if (_enemyScript.withStompState == EnemyScript.WithStompState.KilledByStomp)
                 {
-                    AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBells);
+                    _enemyScript.BounceKillEnemy();
                 }
-                else if (_playerOnEnemyCollider.name == "Beetle")
+                else
                 {
-                    AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerStunEnemyBoing);
+                    // default: stun the enemy — bounce player up so the stomp doesn't repeat next frame
+                    _enemyScript.EnemyStunned = true;
                 }
+                _enemyScript.PlayStompSound();
             }
         }
         else
@@ -511,12 +511,29 @@ public class PlayerController : MonoBehaviour
         {
             _cameraScript.RemoveCameraTarget(transform);
         }
+        // disable kill zone before snap so boundary wall movement can't push players into it
+        OnAnyPlayerDied?.Invoke();
+        // check after removing from camera — if other player is also dead, snap camera to save point
+        if (GameManager.Instance != null && GameManager.Instance.BothPlayersDead())
+        {
+            GameManager.Instance.OnBothPlayersDied();
+        }
         AudioScript.Instance.PlayAudioWaitToFinishClip(soundPlayerDied, AudioChannel.Player);
         _animator.Play("PlayerHurt");
         StartCoroutine(EnumDisablePlayer(DISABLE_PLAYER_TIME));
         // 3x force for a dramatic death bounce
         BouncePlayerUp(_playerRb.linearVelocity.x, _stunBounceForce * 3f);
     }
+
+    public void FreezeAtFinish()
+    {
+        playerControlsEnabled = false;
+        _playerRb.bodyType = RigidbodyType2D.Static;
+    }
+
+    public bool IsPlayerDead => _playerDied;
+    public static event System.Action OnAnyPlayerDied;
+    public static event System.Action OnAnyPlayerRespawned;
 
     public bool PlayerNotSmall()
     {
@@ -539,7 +556,7 @@ public class PlayerController : MonoBehaviour
     // called by enemies and projectiles — shrinks player one state, kills if already small
     public void TakeHit()
     {
-        if (_playerDied || _isInvincible)
+        if (isGodMode || _playerDied || _isInvincible)
         {
             return;
         }
@@ -677,21 +694,12 @@ public class PlayerController : MonoBehaviour
     IEnumerator EnumPlacePlayerOnSavePoint(float t)
     {
         yield return new WaitForSeconds(t);
-        PlacePlayerOnSavePoint(t);
+        PlacePlayerOnSavePoint();
     }
 
-    void PlacePlayerOnSavePoint(float t)
+    void PlacePlayerOnSavePoint()
     {
-        // respawn at last save point; fall back to level start if none reached yet
-        if (_savePointTransform != null)
-        {
-            transform.position = _savePointTransform.position;
-        }
-        else if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
-        {
-            transform.position = GameManager.Instance.startPointTransform.position;
-        }
-
+        transform.position = GetRespawnPosition();
         InitializePlayerState(PlayerState.PlayerSmall);
         _playerRb.simulated = true;
         _playerDied = false;
@@ -700,6 +708,30 @@ public class PlayerController : MonoBehaviour
         {
             _cameraScript.AddCameraTarget(transform);
         }
+        OnAnyPlayerRespawned?.Invoke();
+    }
+
+    Vector3 GetRespawnPosition()
+    {
+        // if the other player is alive, respawn beside them — keeps co-op momentum going
+        if (GameManager.Instance != null)
+        {
+            PlayerController otherPlayer = GameManager.Instance.GetOtherPlayer(this);
+            if (otherPlayer != null && !otherPlayer.IsPlayerDead)
+            {
+                return otherPlayer.transform.position + new Vector3(1f, 0f, 0f);
+            }
+        }
+        // both dead — respawn at save point, fall back to level start if none reached yet
+        if (_savePointTransform != null)
+        {
+            return _savePointTransform.position;
+        }
+        if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
+        {
+            return GameManager.Instance.startPointTransform.position;
+        }
+        return transform.position;
     }
 
 } // end of class

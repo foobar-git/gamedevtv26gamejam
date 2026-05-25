@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Start Point")]
     public Transform startPointTransform;
+    // tracks the last touched save point — initialized to startPointTransform so it is never null
+    public Transform currentSavePointTransform;
 
     void Awake()
     {
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        currentSavePointTransform = startPointTransform;
         InitializeSinglePlayerMode();
         // TODO: [Phase X] - uncomment for two-player mode (and comment out line above)
         // InitializeTwoPlayerMode();
@@ -115,6 +118,7 @@ public class GameManager : MonoBehaviour
     // propagates a save point touch to whichever player didn't trigger it
     public void UpdateOtherPlayerSavePoint(PlayerController triggeringPlayer, Transform savePoint)
     {
+        currentSavePointTransform = savePoint;
         if (playerControllerRed != triggeringPlayer && playerControllerRed != null)
         {
             playerControllerRed.SetSavePoint(savePoint);
@@ -122,6 +126,40 @@ public class GameManager : MonoBehaviour
         if (playerControllerBlue != triggeringPlayer && playerControllerBlue != null)
         {
             playerControllerBlue.SetSavePoint(savePoint);
+        }
+    }
+
+    public PlayerController GetOtherPlayer(PlayerController askingPlayer)
+    {
+        if (askingPlayer == playerControllerRed)
+        {
+            return playerControllerBlue;
+        }
+        if (askingPlayer == playerControllerBlue)
+        {
+            return playerControllerRed;
+        }
+        return null;
+    }
+
+    public bool BothPlayersDead()
+    {
+        bool redDead = playerControllerRed != null && playerControllerRed.IsPlayerDead;
+        bool blueDead = playerControllerBlue != null && playerControllerBlue.IsPlayerDead;
+        return redDead && blueDead;
+    }
+
+    // called when both players are dead — disables auto move and snaps camera to save point
+    public void OnBothPlayersDied()
+    {
+        if (cameraScript == null)
+        {
+            return;
+        }
+        cameraScript.DisableAutoMoveTemporarily();
+        if (currentSavePointTransform != null)
+        {
+            cameraScript.SnapToPosition(currentSavePointTransform);
         }
     }
 
