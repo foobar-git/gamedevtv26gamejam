@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
     // two-player mode: replace with hudLivesRed and hudLivesBlue (see InitializeTwoPlayerMode)
     public TextMeshPro hudLives;
 
+    [Header("Audio")]
+    public AudioClip backgroundMusic;
+
     [Header("Start Point")]
     public Transform startPointTransform;
     // tracks the last touched save point — initialized to startPointTransform so it is never null
@@ -45,6 +48,10 @@ public class GameManager : MonoBehaviour
         // TODO: [Phase X] - uncomment for two-player mode (and comment out line above)
         // InitializeTwoPlayerMode();
         InitializeCamera();
+        if (backgroundMusic != null && AudioScript.Instance != null)
+        {
+            AudioScript.Instance.PlayMusic(backgroundMusic);
+        }
     }
 
     void InitializeSinglePlayerMode()
@@ -96,7 +103,7 @@ public class GameManager : MonoBehaviour
     {
         sharedLives += i;
         UpdateSharedLivesDisplay();
-        if (sharedLives <= 0)
+        if (sharedLives < 0)
         {
             TriggerGameOver();
         }
@@ -167,7 +174,7 @@ public class GameManager : MonoBehaviour
     {
         if (hudLives != null)
         {
-            hudLives.text = sharedLives.ToString();
+            hudLives.text = Mathf.Max(0, sharedLives).ToString();
         }
     }
 }

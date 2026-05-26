@@ -218,6 +218,12 @@ public class CameraScript : MonoBehaviour
         _isAutoMoveTemporarilyDisabled = false;
     }
 
+    // enables auto-scroll — called by CameraAutoMoveTrigger when a player reaches it
+    public void EnableAutoMove()
+    {
+        isAutoMove = true;
+    }
+
     // instantly snaps camera to save point position and clears SmoothDamp velocity
     public void SnapToPosition(Transform targetTransform)
     {

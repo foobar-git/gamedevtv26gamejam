@@ -81,3 +81,10 @@
 - Created InteractableScript: trigger-based, shoot button activates, isToggle selectable in Inspector.
 - Created FinishFlagScript: both players must reach it, first freezes, second restarts the scene.
 
+## 2026-05-26
+- Fixed lives decrementing multiple times per death (KillBox had many child colliders, PlayerDied lacked guard)
+- Added early-return guard to PlayerDied matching ForcePlayerDied pattern
+- Restart scene via SceneManager.LoadScene when lives hit 0 (was SetActive false)
+- Changed restart trigger from lives <= 0 to lives < 0 — player gets one last life at 0
+- Added CameraAutoMoveTrigger script + EnableAutoMove on CameraScript
+- Fixed camera ref assignment moved from Awake to Start (GameManager null in Awake)

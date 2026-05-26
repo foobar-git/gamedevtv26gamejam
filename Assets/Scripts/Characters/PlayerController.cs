@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 // Controls a single player character (Red or Blue). Handles movement, jumping,
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour
     public bool playerCanShoot = false;
     public int playerDirection = 1;
     public int playerLives = 3;
-    public int playerCoins = 0;
+    public int playerCoins = 0; // TODO: [Phase X] - remove, replaced by GameManager.sharedCoins
 
     public enum PlayerState { PlayerSmall, PlayerNormal, PlayerLarge, PlayerFire }
     public PlayerState playerState;
@@ -97,10 +98,6 @@ public class PlayerController : MonoBehaviour
     {
         _playerRb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        if (GameManager.Instance != null)
-        {
-            _cameraScript = GameManager.Instance.cameraScript;
-        }
 
         // fall back to hardcoded defaults if no CharacterDataSO is assigned in the Inspector
         if (characterData != null)
@@ -132,6 +129,10 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            _cameraScript = GameManager.Instance.cameraScript;
+        }
         if (GameManager.Instance != null && GameManager.Instance.startPointTransform != null)
         {
             transform.position = GameManager.Instance.startPointTransform.position;
@@ -143,7 +144,7 @@ public class PlayerController : MonoBehaviour
         }
         if (hudCoins != null)
         {
-            hudCoins.text = playerCoins.ToString();
+            hudCoins.text = (GameManager.Instance?.sharedCoins ?? 0).ToString();
         }
     }
 
@@ -166,10 +167,7 @@ public class PlayerController : MonoBehaviour
     void LockPlayerZPosition()
     {
         // Z must always be 0 — transform.position assignments can inherit non-zero Z from source transforms
-        if (transform.position.z != 0f)
-        {
-            transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
-        }
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
     }
 
     void ReadPlayerInput()
@@ -425,7 +423,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!_playerDied)
         {
-            if (!_playerSaved && other.gameObject.CompareTag("SavePoint"))
+            if (other.gameObject.CompareTag("SavePoint") && other.transform != _savePointTransform)
             {
                 AudioScript.Instance.PlayAudioWaitToFinishClip(soundSavePoint, AudioChannel.Player);
                 _savePointTransform = other.transform;
@@ -475,6 +473,7 @@ public class PlayerController : MonoBehaviour
         {
             _playerRb.linearVelocity = Vector2.zero;
             _playerRb.simulated = false;
+            PlayerDied();
         }
     }
 
@@ -489,6 +488,10 @@ public class PlayerController : MonoBehaviour
 
     void PlayerDied()
     {
+        if (_playerDied)
+        {
+            return;
+        }
         _playerDied = true;
         UpdatePlayerLives(-1);
         ExecuteDeathSequence();
@@ -604,16 +607,19 @@ public class PlayerController : MonoBehaviour
         hudLives = hud;
         if (hudLives != null)
         {
-            hudLives.text = playerLives.ToString();
+            hudLives.text = Mathf.Max(0, playerLives).ToString();
         }
     }
 
     public void UpdatePlayerCoins(int i)
     {
-        playerCoins += i;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.sharedCoins += i;
+        }
         if (hudCoins != null)
         {
-            hudCoins.text = playerCoins.ToString();
+            hudCoins.text = (GameManager.Instance?.sharedCoins ?? 0).ToString();
         }
     }
 
@@ -631,7 +637,7 @@ public class PlayerController : MonoBehaviour
         playerLives += i;
         if (hudLives != null)
         {
-            hudLives.text = playerLives.ToString();
+            hudLives.text = Mathf.Max(0, playerLives).ToString();
         }
     }
 
@@ -673,7 +679,7 @@ public class PlayerController : MonoBehaviour
         _playerRb.simulated = false;
         if (IsAllLivesGone())
         {
-            gameObject.SetActive(false);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         else
         {
@@ -688,7 +694,7 @@ public class PlayerController : MonoBehaviour
             return GameManager.Instance != null && GameManager.Instance.sharedLives <= 0;
         }
         // two-player mode: each character checks its own lives
-        return playerLives <= 0;
+        return playerLives < 0;
     }
 
     IEnumerator EnumPlacePlayerOnSavePoint(float t)
