@@ -88,3 +88,10 @@
 - Changed restart trigger from lives <= 0 to lives < 0 — player gets one last life at 0
 - Added CameraAutoMoveTrigger script + EnableAutoMove on CameraScript
 - Fixed camera ref assignment moved from Awake to Start (GameManager null in Awake)
+
+## 2026-05-27
+- Redesigned level for better accessibility
+- Renamed CameraAutoMoveTrigger to CameraAutoMoveTriggerScript
+- Added enable/disable/speed options to camera auto-scroll trigger
+- Added DisableAutoMove() and SetAutoMoveSpeed() to CameraScript
+- Updated player prefabs and ProjectSettings

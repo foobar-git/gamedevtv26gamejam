@@ -350,7 +350,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &4309409844954247913
 MonoBehaviour:
@@ -382,10 +382,7 @@ MonoBehaviour:
     type: 3}
   soundPlayerDied: {fileID: 8300000, guid: 068cbb42963a5e34989443f190bb5a25, type: 3}
   soundSavePoint: {fileID: 8300000, guid: af34edc09f18ffb49899b9b1e5361b43, type: 3}
-  soundPlayerStunEnemyBells: {fileID: 8300000, guid: dbffadafd6d956e4a8cfe27f58149619,
-    type: 3}
-  soundPlayerStunEnemyBoing: {fileID: 8300000, guid: 6e3d089a4440dc04bac14d1bf798f518,
-    type: 3}
+  isGodMode: 0
   playerControlsEnabled: 1
   playerCanShoot: 0
   playerDirection: 1
